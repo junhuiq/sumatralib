@@ -256,6 +256,10 @@ static MenuDef menuDefView[] = {
         CmdToggleBookmarks,
     },
     {
+        _TRA("Show &Library"),
+        CmdToggleLibrary,
+    },
+    {
         _TRN("Show &Menu"),
         CmdToggleMenuBar,
     },
@@ -1027,6 +1031,10 @@ static MenuDef menuDefContext[] = {
         CmdToggleBookmarks,
     },
     {
+        _TRA("Show &Library"),
+        CmdToggleLibrary,
+    },
+    {
         _TRN("Show &Toolbar"),
         CmdToggleToolbar,
     },
@@ -1654,6 +1662,7 @@ static void MenuUpdateStateForWindow(MainWindow* win) {
     bool documentSpecific = win->IsDocLoaded();
     bool checked = documentSpecific ? win->tocVisible : gGlobalPrefs->showToc;
     MenuSetChecked(win->menu, CmdToggleBookmarks, checked);
+    MenuSetChecked(win->menu, CmdToggleLibrary, gGlobalPrefs->showLibrary);
 
     MenuSetChecked(win->menu, CmdFavoriteToggle, gGlobalPrefs->showFavorites);
     MenuSetChecked(win->menu, CmdToggleToolbar, gGlobalPrefs->showToolbar);
@@ -1885,6 +1894,7 @@ void OnWindowContextMenu(MainWindow* win, int x, int y) {
     MenuUpdatePrintItem(win, popup, true);
     MenuSetEnabled(popup, CmdToggleBookmarks, win->ctrl->HasToc());
     MenuSetChecked(popup, CmdToggleBookmarks, win->tocVisible);
+    MenuSetChecked(popup, CmdToggleLibrary, gGlobalPrefs->showLibrary);
 
     MenuSetEnabled(popup, CmdFavoriteToggle, HasFavorites());
     MenuSetChecked(popup, CmdFavoriteToggle, gGlobalPrefs->showFavorites);

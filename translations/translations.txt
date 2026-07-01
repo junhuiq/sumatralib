@@ -15210,6 +15210,9 @@ it:Menu
 nl:Menu
 pl:Menu
 sk:Ponuka
+:My Library
+cn:我的图书馆
+
 :Metering Mode:
 br:Modo de Medição:
 cn:测光模式:
@@ -21905,6 +21908,9 @@ tw:顯示我的最愛(&F)
 uk:Показати О&бране
 uz:Sevimlilarni ko‘rsatish
 vn:Hiện mục Ưa thích
+:Show &Library
+cn:显示图书馆(&L)
+
 :Show &Menu
 br:Mostrar &Menu
 cn:显示菜单(&M)

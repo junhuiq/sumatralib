@@ -529,6 +529,13 @@ const favorite: Field[] = [
   notSaved(mkField("MenuId", Int, 0, "id of this favorite in the menu (assigned by AppendFavMenuItems)")),
 ];
 
+const libraryEntry: Field[] = [
+  mkField("Name", Str, "", "name of the library entry (display name)"),
+  mkField("Path", Str, "", "full file path for book files, empty for directories"),
+  mkField("ParentIndex", Int, -1, "index of parent entry (-1 = top-level child of My Library)"),
+  mkField("IsExpanded", Bool, true, "whether tree node is expanded by default"),
+];
+
 const fileSettings: Field[] = [
   mkField("FilePath", Str, null, "path of the document"),
   mkArray("Favorites", favorite, "Values which are persisted for bookmarks/favorites"),
@@ -871,6 +878,9 @@ const globalPrefs: Field[] = [
     "3.7",
   ),
   mkField("ShowFavorites", Bool, false, "if true, we show the Favorites sidebar"),
+  mkField("ShowLibrary", Bool, true, "if true, we show the Library sidebar"),
+  mkField("LibraryDx", Int, 0, "width of the Library sidebar"),
+  setStructName(mkArray("Library", libraryEntry, "user's personal library of books and directories"), "LibraryEntry"),
   mkField(
     "ShowToc",
     Bool,

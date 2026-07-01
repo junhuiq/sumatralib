@@ -180,6 +180,10 @@ MainWindow::~MainWindow() {
     // favLayout (VBox) owns favLabelWithClose and favTreeView
     delete favLayout;
 
+    // libraryLayout (VBox) owns libraryLabelWithClose, libraryAddButton and libraryTreeView
+    delete libraryLayout;
+    delete librarySplitter;
+
     DestroyClaudePanel(this);
     DestroyGrokPanel(this);
     DestroyCodexPanel(this);
@@ -758,20 +762,40 @@ void UpdateControlsColors(MainWindow* win) {
 
     {
         auto tocTreeView = win->tocTreeView;
-        tocTreeView->SetColors(txtCol, bgCol);
-
-        win->tocLabelWithClose->SetColors(txtCol, bgCol);
+        if (tocTreeView) {
+            tocTreeView->SetColors(txtCol, bgCol);
+        }
+        if (win->tocLabelWithClose) {
+            win->tocLabelWithClose->SetColors(txtCol, bgCol);
+        }
         if (win->tocFilterEdit) {
             win->tocFilterEdit->SetColors(txtCol, bgCol);
         }
-        win->sidebarSplitter->SetColors(kColorNoChange, splitterCol);
+        if (win->sidebarSplitter) {
+            win->sidebarSplitter->SetColors(kColorNoChange, splitterCol);
+        }
     }
 
     auto favTreeView = win->favTreeView;
     if (favTreeView) {
         favTreeView->SetColors(txtCol, bgCol);
-        win->favLabelWithClose->SetColors(txtCol, bgCol);
-        win->favSplitter->SetColors(kColorNoChange, splitterCol);
+        if (win->favLabelWithClose) {
+            win->favLabelWithClose->SetColors(txtCol, bgCol);
+        }
+        if (win->favSplitter) {
+            win->favSplitter->SetColors(kColorNoChange, splitterCol);
+        }
+    }
+
+    auto libraryTreeView = win->libraryTreeView;
+    if (libraryTreeView) {
+        libraryTreeView->SetColors(txtCol, bgCol);
+        if (win->libraryLabel) {
+            win->libraryLabel->SetColors(txtCol, bgCol);
+        }
+        if (win->librarySplitter) {
+            win->librarySplitter->SetColors(kColorNoChange, splitterCol);
+        }
     }
 }
 

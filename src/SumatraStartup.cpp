@@ -351,7 +351,7 @@ void SetTabState(WindowTab* tab, TabState* state) {
     }
 
     tab->tocState = *state->tocState;
-    SetSidebarVisibility(win, state->showToc, gGlobalPrefs->showFavorites);
+    SetSidebarVisibility(win, state->showToc, gGlobalPrefs->showFavorites, gGlobalPrefs->showLibrary);
 
     DisplayMode displayMode = DisplayModeFromString(state->displayMode, DisplayMode::Automatic);
     if (displayMode != DisplayMode::Automatic) {

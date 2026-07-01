@@ -481,9 +481,9 @@ void RebuildFavMenu(MainWindow* win, HMENU menu) {
 
 void ToggleFavorites(MainWindow* win) {
     if (gGlobalPrefs->showFavorites) {
-        SetSidebarVisibility(win, win->tocVisible, false);
+        SetSidebarVisibility(win, win->tocVisible, false, win->libraryVisible);
     } else {
-        SetSidebarVisibility(win, win->tocVisible, true);
+        SetSidebarVisibility(win, win->tocVisible, true, win->libraryVisible);
         HwndSetFocus(win->favTreeView->hwnd);
     }
 }
@@ -677,7 +677,7 @@ void UpdateFavoritesTree(MainWindow* win) {
     if (newModel->ChildCount(root) == 0) {
         show = false;
     }
-    SetSidebarVisibility(win, win->tocVisible, show);
+    SetSidebarVisibility(win, win->tocVisible, show, win->libraryVisible);
 }
 
 void UpdateFavoritesTreeForAllWindows() {

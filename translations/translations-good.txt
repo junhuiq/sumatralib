@@ -5548,6 +5548,9 @@ tw:加到我的最愛
 uk:Додати до закладок
 uz:Tanlanganlarga qo'shish
 vn:Thêm vào Ưa thích
+:Add files or directories
+cn:添加文件或目录
+
 :Advanced
 af:Gevorderde
 am:Ընդլայնված
@@ -25477,6 +25480,9 @@ tw:選單
 uk:Меню
 uz:Menyu
 vn:Trình đơn
+:My Library
+cn:我的图书馆
+
 :Metering Mode:
 af:Meetmodus:
 am:የመለኪያ ሁኔታ:
@@ -39712,6 +39718,9 @@ tw:顯示我的最愛
 uk:Перелік закладок
 uz:Tanlanganlarni ko'rsatish
 vn:Hiện Ưa thích
+:Show &Library
+cn:显示图书馆(&L)
+
 :Show File In Folder...
 af:Wys Lêer in Vouer...
 am:Ցուցադրել ֆայլը թղթապանակում...

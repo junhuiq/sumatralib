@@ -354,6 +354,18 @@ struct Favorite {
     int menuId;
 };
 
+// library entry (a book or a directory in the library tree)
+struct LibraryEntry {
+    // name of the library entry (display name)
+    Str name;
+    // full file path for book files, empty for directories
+    Str path;
+    // index of parent entry (-1 = top-level child of My Library)
+    int parentIndex;
+    // whether tree node is expanded by default
+    bool isExpanded;
+};
+
 // information about opened files (in most recently used order)
 struct FileState {
     // path of the document
@@ -549,6 +561,12 @@ struct GlobalPrefs {
     bool searchUIFloating;
     // if true, we show the Favorites sidebar
     bool showFavorites;
+    // if true, we show the Library sidebar
+    bool showLibrary;
+    // width of the Library sidebar
+    int libraryDx;
+    // user's personal library of books and directories
+    Vec<LibraryEntry*>* library;
     // if true, we show table of contents (Bookmarks) sidebar if it's
     // present in the document
     bool showToc;
@@ -931,6 +949,14 @@ static const FieldInfo gFavoriteFields[] = {
 };
 static const StructInfo gFavoriteInfo = {sizeof(Favorite), 3, gFavoriteFields, "Name\0PageNo\0PageLabel"};
 
+static const FieldInfo gLibraryEntryFields[] = {
+    {offsetof(LibraryEntry, name), SettingType::String, (intptr_t)""},
+    {offsetof(LibraryEntry, path), SettingType::String, (intptr_t)""},
+    {offsetof(LibraryEntry, parentIndex), SettingType::Int, -1},
+    {offsetof(LibraryEntry, isExpanded), SettingType::Bool, true},
+};
+static const StructInfo gLibraryEntryInfo = {sizeof(LibraryEntry), 4, gLibraryEntryFields, "Name\0Path\0ParentIndex\0IsExpanded"};
+
 static const FieldInfo gPointFFields[] = {
     {offsetof(PointF, x), SettingType::Float, (intptr_t)"0"},
     {offsetof(PointF, y), SettingType::Float, (intptr_t)"0"},
@@ -1055,6 +1081,9 @@ static const FieldInfo gGlobalPrefsFields[] = {
     {offsetof(GlobalPrefs, toolbarPosition), SettingType::String, (intptr_t)"top"},
     {offsetof(GlobalPrefs, searchUIFloating), SettingType::Bool, false},
     {offsetof(GlobalPrefs, showFavorites), SettingType::Bool, false},
+    {offsetof(GlobalPrefs, showLibrary), SettingType::Bool, true},
+    {offsetof(GlobalPrefs, libraryDx), SettingType::Int, 0},
+    {offsetof(GlobalPrefs, library), SettingType::Array, (intptr_t)&gLibraryEntryInfo},
     {offsetof(GlobalPrefs, showToc), SettingType::Bool, true},
     {offsetof(GlobalPrefs, showLinks), SettingType::Bool, false},
     {offsetof(GlobalPrefs, showStartPage), SettingType::Bool, true},
@@ -1137,12 +1166,12 @@ static const FieldInfo gGlobalPrefsFields[] = {
     {(size_t)-1, SettingType::Comment, (intptr_t)"Settings below are not recognized by the current version"},
 };
 static const StructInfo gGlobalPrefsInfo = {
-    sizeof(GlobalPrefs), 111, gGlobalPrefsFields,
+    sizeof(GlobalPrefs), 114, gGlobalPrefsFields,
     "\0\0CheckForUpdates\0CustomScreenDPI\0DefaultDisplayMode\0DefaultZoom\0DisableJavaScript\0AllowExternalImages\0Ena"
     "bleTeXEnhancements\0EscToExit\0FullPathInTitle\0InverseSearchCmdLine\0LazyLoading\0MainWindowBackground\0NoHomeTab"
     "\0HomePageSortByFrequentlyRead\0HomePageShowList\0ReloadModifiedDocuments\0RememberOpenedFiles\0RememberStatePerDo"
     "cument\0RestoreSession\0ReuseInstance\0ShowMenubar\0ShowMenubarWithTabs\0ShowTips\0CustomColors\0ShowToolbar\0Tool"
-    "bar\0ToolbarPosition\0SearchUIFloating\0ShowFavorites\0ShowToc\0ShowLinks\0ShowStartPage\0SidebarDx\0Scrollbars\0S"
+    "bar\0ToolbarPosition\0SearchUIFloating\0ShowFavorites\0ShowLibrary\0LibraryDx\0Library\0ShowToc\0ShowLinks\0ShowStartPage\0SidebarDx\0Scrollbars\0S"
     "crollbarInSinglePage\0SmoothScroll\0DjvuEngine\0CitationHoverDelay\0ReadAloudVoiceId\0FastScrollOverScrollbar\0Pre"
     "ventSleepInFullscreen\0TabWidth\0Theme\0TocDy\0ToolbarSize\0TreeFontName\0TreeFontSize\0UIFontSize\0DisableAntiAli"
     "as\0DisableAutoLinks\0UseSysColors\0UseTabs\0TabsMru\0ZoomLevels\0ZoomIncrement\0\0FixedPageUI\0\0EBookUI\0\0Comic"

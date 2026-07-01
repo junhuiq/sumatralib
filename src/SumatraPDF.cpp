@@ -66,6 +66,7 @@
 #include "CrashHandler.h"
 #include "ExternalViewers.h"
 #include "Favorites.h"
+#include "Library.h"
 #include "FileThumbnails.h"
 #include "Menu.h"
 #include "Print.h"
@@ -211,6 +212,7 @@ static StrVec gNextPrevDirCache; // cached files in gNextPrevDir
 
 static void CloseDocumentInCurrentTab(MainWindow*, bool keepUIEnabled, bool deleteModel);
 static void OnSidebarSplitterMove(Splitter::MoveEvent*);
+static void OnLibrarySplitterMove(Splitter::MoveEvent*);
 static void OnFavSplitterMove(Splitter::MoveEvent*);
 
 EBookUI* GetEBookUI() {
@@ -745,7 +747,7 @@ static void UpdateWindowRtlLayout(MainWindow* win) {
     bool tocVisible = win->tocVisible;
     bool favVisible = gGlobalPrefs->showFavorites;
     if (tocVisible || favVisible) {
-        SetSidebarVisibility(win, false, false);
+        SetSidebarVisibility(win, false, false, false);
     }
 
     if (win->tabsCtrl) win->tabsCtrl->LayoutTabs();
@@ -763,7 +765,7 @@ static void UpdateWindowRtlLayout(MainWindow* win) {
     // ensure that the ToC sidebar is on the correct side and that its
     // title and close button are also correctly laid out
     if (tocVisible || favVisible) {
-        SetSidebarVisibility(win, tocVisible, favVisible);
+        SetSidebarVisibility(win, tocVisible, favVisible, win->libraryVisible);
         if (tocVisible) {
             SendMessageW(win->hwndTocBox, WM_SIZE, 0, 0);
         }
@@ -1774,7 +1776,7 @@ static void ReplaceDocumentInCurrentTab(LoadArgs* args, DocController* ctrl, Fil
     if (!IsMainWindowValid(win) || win->isBeingClosed) {
         return;
     }
-    SetSidebarVisibility(win, showToc, gGlobalPrefs->showFavorites);
+    SetSidebarVisibility(win, showToc, gGlobalPrefs->showFavorites, gGlobalPrefs->showLibrary);
     // restore scroll state after the canvas size has been restored
     if ((args->showWin || ss.page != 1) && win->AsFixed()) {
         win->AsFixed()->SetScrollState(ss);
@@ -1961,6 +1963,19 @@ void ReloadDocument(MainWindow* win, bool autoRefresh) {
 }
 
 static void CreateSidebar(MainWindow* win) {
+    // Library splitter (leftmost vertical splitter, between library and TOC/Fav sidebar)
+    {
+        Splitter::CreateArgs args;
+        args.parent = win->hwndFrame;
+        args.type = SplitterType::Vert;
+        win->librarySplitter = new Splitter();
+        win->librarySplitter->onMove = MkFunc1Void(OnLibrarySplitterMove);
+        win->librarySplitter->Create(args);
+    }
+
+    CreateLibrary(win);
+
+    // Existing sidebar splitter (between TOC/Fav sidebar and canvas)
     {
         Splitter::CreateArgs args;
         args.parent = win->hwndFrame;
@@ -1994,6 +2009,8 @@ static void CreateSidebar(MainWindow* win) {
     if (gGlobalPrefs->showFavorites) {
         HwndRepaintNow(win->hwndFavBox);
     }
+
+    UpdateControlsColors(win);
 }
 
 static void UpdateToolbarSidebarText(MainWindow* win) {
@@ -2003,6 +2020,19 @@ static void UpdateToolbarSidebarText(MainWindow* win) {
 
     win->tocLabelWithClose->SetLabel(_TRA("Bookmarks"));
     win->favLabelWithClose->SetLabel(_TRA("Favorites"));
+    if (win->libraryLabel) {
+        HwndSetText(win->libraryLabel->hwnd, _TRA("My Library"));
+    }
+    if (win->hwndLibraryAddTooltip) {
+        TempWStr tip = ToWStrTemp(_TRA("Add files or directories"));
+        TOOLINFOW ti{};
+        ti.cbSize = sizeof(ti);
+        ti.hwnd = win->hwndLibraryBox;
+        ti.uId = (UINT_PTR)win->libraryAddButton->hwnd;
+        ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+        ti.lpszText = tip.s;
+        SendMessageW(win->hwndLibraryAddTooltip, TTM_UPDATETIPTEXT, 0, (LPARAM)&ti);
+    }
 }
 
 static void UpdateWindowFrameBorderColor(MainWindow* win);
@@ -2229,7 +2259,7 @@ MainWindow* CreateAndShowMainWindow(SessionData* data, bool showWin) {
 
     // always set up toolbar and sidebar, even if we defer showing
     ShowOrHideToolbar(win);
-    SetSidebarVisibility(win, false, gGlobalPrefs->showFavorites);
+    SetSidebarVisibility(win, false, gGlobalPrefs->showFavorites, gGlobalPrefs->showLibrary);
     ToolbarUpdateStateForWindow(win, true);
 
     if (showWin) {
@@ -2938,9 +2968,9 @@ void LoadModelIntoTab(WindowTab* tab) {
     PickAnotherRandomPromotion();
 
     if (win->InPresentation()) {
-        SetSidebarVisibility(win, tab->showTocPresentation, gGlobalPrefs->showFavorites);
+        SetSidebarVisibility(win, tab->showTocPresentation, gGlobalPrefs->showFavorites, win->libraryVisible);
     } else {
-        SetSidebarVisibility(win, tab->showToc, gGlobalPrefs->showFavorites);
+        SetSidebarVisibility(win, tab->showToc, gGlobalPrefs->showFavorites, win->libraryVisible);
     }
 
     DisplayModel* dm = win->AsFixed();
@@ -3227,7 +3257,7 @@ static void CloseDocumentInCurrentTab(MainWindow* win, bool keepUIEnabled, bool 
     }
 
     if (!keepUIEnabled) {
-        SetSidebarVisibility(win, false, gGlobalPrefs->showFavorites);
+        SetSidebarVisibility(win, false, gGlobalPrefs->showFavorites, win->libraryVisible);
         ToolbarUpdateStateForWindow(win, true);
         UpdateToolbarPageText(win, 0);
         UpdateToolbarFindText(win);
@@ -4593,6 +4623,8 @@ static void RelayoutFrame(MainWindow* win, bool updateToolbars, int sidebarDx) {
     curState.isToolbarVisible = win->isToolbarVisible;
     curState.tocVisible = win->tocVisible;
     curState.showFavorites = gGlobalPrefs->showFavorites;
+    curState.libraryVisible = win->libraryVisible;
+    curState.libraryDx = gGlobalPrefs->libraryDx;
     curState.showMenuBarRebar = IsShowingMenuBarRebar(win);
     curState.claudeVisible = win->claudeVisible;
     curState.grokVisible = win->grokVisible;
@@ -4727,6 +4759,25 @@ static void RelayoutFrame(MainWindow* win, bool updateToolbars, int sidebarDx) {
         ShowWindow(win->hwndReBar, win->isToolbarVisible ? SW_SHOW : SW_HIDE);
     }
 
+    // Library sidebar (leftmost column)
+    bool libraryVisible = win->libraryVisible;
+    if (libraryVisible && win->hwndLibraryBox) {
+        int libDx = gGlobalPrefs->libraryDx;
+        if (libDx <= 0) {
+            libDx = rc.dx / 5;
+        }
+        libDx = limitValue(libDx, kSidebarMinDx, rc.dx / 3);
+
+        Rect rLib(rc.TL(), Size{libDx, rc.dy});
+        dh.MoveWindow(win->hwndLibraryBox, rLib);
+
+        Rect rLibSplit(rc.x + libDx, rc.y, kSplitterDx, rc.dy);
+        dh.MoveWindow(win->librarySplitter->hwnd, rLibSplit);
+
+        rc.x += libDx + kSplitterDx;
+        rc.dx -= libDx + kSplitterDx;
+    }
+
     // ToC and Favorites sidebars at the left
     bool favVisible = gGlobalPrefs->showFavorites && !gPluginMode && CanAccessDisk();
     bool tocVisible = win->tocVisible;
@@ -4826,6 +4877,9 @@ static void RelayoutFrame(MainWindow* win, bool updateToolbars, int sidebarDx) {
     }
     if (favVisible) {
         RedrawWindow(win->hwndFavBox, nullptr, nullptr, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
+    }
+    if (libraryVisible && win->hwndLibraryBox) {
+        RedrawWindow(win->hwndLibraryBox, nullptr, nullptr, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
     }
     if (win->codexVisible && win->hwndCodexBox) {
         RelayoutCodexPanel(win);
@@ -5484,8 +5538,8 @@ void EnterFullScreen(MainWindow* win, bool presentation) {
     // fullscreen size during the transition.
     // TODO: make showFavorites a per-window pref
     bool showFavoritesTmp = gGlobalPrefs->showFavorites;
-    if (presentation && (win->tocVisible || gGlobalPrefs->showFavorites)) {
-        SetSidebarVisibility(win, false, false, false);
+    if (presentation && (win->tocVisible || gGlobalPrefs->showFavorites || win->libraryVisible)) {
+        SetSidebarVisibility(win, false, false, false, false);
     }
 
     // Set state flags; RelayoutFrame (triggered by SetWindowPos/WM_SIZE)
@@ -5573,7 +5627,7 @@ void ExitFullScreen(MainWindow* win) {
 
     BeginFrameRedrawSuppression(win);
     bool tocVisible = win->CurrentTab() && win->CurrentTab()->showToc;
-    SetSidebarVisibility(win, tocVisible, gGlobalPrefs->showFavorites, false);
+    SetSidebarVisibility(win, tocVisible, gGlobalPrefs->showFavorites, gGlobalPrefs->showLibrary, false);
 
     if (win->tabsVisible) {
         win->tabsCtrl->SetIsVisible(true);
@@ -6090,6 +6144,26 @@ static void OnSidebarSplitterMove(Splitter::MoveEvent* ev) {
     RelayoutFrame(win, false, sidebarDx);
 }
 
+static void OnLibrarySplitterMove(Splitter::MoveEvent* ev) {
+    Splitter* splitter = ev->w;
+    HWND hwnd = splitter->hwnd;
+    MainWindow* win = FindMainWindowByHwnd(hwnd);
+
+    Point pcur = HwndGetCursorPos(win->hwndFrame);
+    int libDx = pcur.x;
+
+    Rect rFrame = ClientRect(win->hwndFrame);
+    Rect rLib = ClientRect(win->hwndLibraryBox);
+    int minDx = std::min(kSidebarMinDx, rLib.dx);
+    int maxDx = std::max(rFrame.dx / 3, rLib.dx);
+    if (libDx < minDx || libDx > maxDx) {
+        ev->resizeAllowed = false;
+        return;
+    }
+    gGlobalPrefs->libraryDx = libDx;
+    RelayoutFrame(win, false, libDx);
+}
+
 static void OnFavSplitterMove(Splitter::MoveEvent* ev) {
     Splitter* splitter = ev->w;
     HWND hwnd = splitter->hwnd;
@@ -6124,7 +6198,7 @@ void RelayoutForCodexSplitter(MainWindow* win) {
     RelayoutFrame(win, false);
 }
 
-void SetSidebarVisibility(MainWindow* win, bool tocVisible, bool showFavorites, bool relayout) {
+void SetSidebarVisibility(MainWindow* win, bool tocVisible, bool showFavorites, bool showLibrary, bool relayout) {
     if (gPluginMode || !CanAccessDisk()) {
         showFavorites = false;
     }
@@ -6136,6 +6210,13 @@ void SetSidebarVisibility(MainWindow* win, bool tocVisible, bool showFavorites, 
     if (PM_BLACK_SCREEN == win->presentation || PM_WHITE_SCREEN == win->presentation) {
         tocVisible = false;
         showFavorites = false;
+        showLibrary = false;
+    }
+
+    win->libraryVisible = showLibrary;
+
+    if (showLibrary && win->libraryTreeView) {
+        PopulateLibraryTree(win);
     }
 
     if (tocVisible) {
@@ -6158,9 +6239,11 @@ void SetSidebarVisibility(MainWindow* win, bool tocVisible, bool showFavorites, 
 
     // TODO: make this a per-window setting as well?
     gGlobalPrefs->showFavorites = showFavorites;
+    gGlobalPrefs->showLibrary = showLibrary;
 
-    if ((!tocVisible && HwndIsFocused(win->tocTreeView->hwnd)) ||
-        (!showFavorites && HwndIsFocused(win->favTreeView->hwnd))) {
+    if ((!tocVisible && win->tocTreeView && HwndIsFocused(win->tocTreeView->hwnd)) ||
+        (!showFavorites && win->favTreeView && HwndIsFocused(win->favTreeView->hwnd)) ||
+        (!showLibrary && win->libraryTreeView && HwndIsFocused(win->libraryTreeView->hwnd))) {
         HwndSetFocus(win->hwndFrame);
     }
 
@@ -6172,6 +6255,12 @@ void SetSidebarVisibility(MainWindow* win, bool tocVisible, bool showFavorites, 
     HwndSetVisibility(win->hwndFavBox, showFavorites);
     win->favSplitter->isLive = true;
 
+    HwndSetVisibility(win->librarySplitter->hwnd, showLibrary);
+    HwndSetVisibility(win->hwndLibraryBox, showLibrary);
+    if (win->librarySplitter) {
+        win->librarySplitter->isLive = true;
+    }
+
     if (relayout) {
         RelayoutFrame(win, false);
         if (tocVisible) {
@@ -6180,11 +6269,17 @@ void SetSidebarVisibility(MainWindow* win, bool tocVisible, bool showFavorites, 
         if (showFavorites) {
             RedrawWindow(win->hwndFavBox, nullptr, nullptr, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
         }
+        if (showLibrary) {
+            RedrawWindow(win->hwndLibraryBox, nullptr, nullptr, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
+        }
         if (tocVisible || showFavorites) {
             InvalidateRect(win->sidebarSplitter->hwnd, nullptr, TRUE);
         }
         if (tocVisible && showFavorites) {
             InvalidateRect(win->favSplitter->hwnd, nullptr, TRUE);
+        }
+        if (showLibrary) {
+            InvalidateRect(win->librarySplitter->hwnd, nullptr, TRUE);
         }
     }
 }
@@ -7616,6 +7711,12 @@ static LRESULT FrameOnCommand(MainWindow* win, HWND hwnd, UINT msg, WPARAM wp, L
         case CmdToggleTableOfContents:
             if (ShouldToggle(cmd, win->tocVisible)) {
                 ToggleTocBox(win);
+            }
+            break;
+
+        case CmdToggleLibrary:
+            if (ShouldToggle(cmd, win->libraryVisible)) {
+                ToggleLibraryBox(win);
             }
             break;
 

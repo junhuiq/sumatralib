@@ -628,7 +628,7 @@ static bool OpenFile(StressTest* st, Str fileName) {
     ctrl->SetZoomVirtual(kZoomFitPage, nullptr);
     ctrl->GoToFirstPage();
     if (st->win->tocVisible || gGlobalPrefs->showFavorites) {
-        SetSidebarVisibility(st->win, st->win->tocVisible, gGlobalPrefs->showFavorites);
+        SetSidebarVisibility(st->win, st->win->tocVisible, gGlobalPrefs->showFavorites, st->win->libraryVisible);
     }
 
     st->nSlowPages = 0;

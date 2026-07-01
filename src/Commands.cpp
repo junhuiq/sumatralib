@@ -266,6 +266,7 @@ static SeqStrings gCommandNames =
     "CmdSetInverseSearch\0"
     "CmdToggleToolbarPosition\0"
     "CmdToggleDjvuEngine\0"
+    "CmdToggleLibrary\0"
     "CmdNone\0"
     "\0";
 
@@ -523,6 +524,7 @@ static i32 gCommandIds[] = {
     CmdSetInverseSearch,
     CmdToggleToolbarPosition,
     CmdToggleDjvuEngine,
+    CmdToggleLibrary,
     CmdNone,
 };
 
@@ -780,6 +782,7 @@ SeqStrings gCommandDescriptions =
     "Set Inverse Search Command Line\0"
     "Toggle Toolbar Position\0"
     "Toggle DjVu Engine\0"
+    "Toggle Library\0"
     "Do nothing\0"
     "\0";
 // clang-format on
@@ -831,6 +834,7 @@ static const ArgSpec argSpecs[] = {
     {CmdTogglePresentationMode, kCmdArgState, CommandArg::Type::Bool}, // default
     {CmdToggleBookmarks, kCmdArgState, CommandArg::Type::Bool},        // default
     {CmdToggleTableOfContents, kCmdArgState, CommandArg::Type::Bool},  // default
+    {CmdToggleLibrary, kCmdArgState, CommandArg::Type::Bool},          // default
 
     {CmdNone, "", CommandArg::Type::None}, // sentinel
 };

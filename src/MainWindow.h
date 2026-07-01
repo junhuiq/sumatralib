@@ -10,6 +10,8 @@ class SumatraUIAutomationProvider;
 struct FrameRateWnd;
 struct ReadAloudPlaybackBar;
 struct LabelWithCloseWnd;
+struct Static;
+struct Button;
 struct Splitter;
 struct Tooltip;
 struct TreeView;
@@ -175,6 +177,18 @@ struct MainWindow {
     ILayout* favLayout = nullptr;
     Vec<FileState*> expandedFavorites;
 
+    // state related to library
+    HWND hwndLibraryBox = nullptr;
+    UINT_PTR libraryBoxSubclassId = 0;
+    Static* libraryLabel = nullptr;
+    Button* libraryAddButton = nullptr;
+    HWND hwndLibraryAddTooltip = nullptr;
+    TreeView* libraryTreeView = nullptr;
+    // VBox(HBox(label, addButton), tree); owns controls and lays them out in hwndLibraryBox
+    ILayout* libraryLayout = nullptr;
+    bool libraryVisible = false;
+    Splitter* librarySplitter = nullptr;
+
     // AI chat sidebars (right side; Claude Code and Grok Build are mutually exclusive)
     HWND hwndClaudeBox = nullptr;
     UINT_PTR claudeBoxSubclassId = 0;
@@ -325,6 +339,8 @@ struct MainWindow {
         bool isToolbarVisible = false;
         bool tocVisible = false;
         bool showFavorites = false;
+        bool libraryVisible = false;
+        int libraryDx = 0;
         bool showMenuBarRebar = false;
         bool claudeVisible = false;
         bool grokVisible = false;

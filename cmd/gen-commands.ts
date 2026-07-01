@@ -257,6 +257,7 @@ export const commands = [
     "CmdSetInverseSearch", "Set Inverse Search Command Line",
     "CmdToggleToolbarPosition", "Toggle Toolbar Position",
     "CmdToggleDjvuEngine", "Toggle DjVu Engine",
+    "CmdToggleLibrary", "Toggle Library",
     "CmdNone", "Do nothing",
 ];
 

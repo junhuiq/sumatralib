@@ -286,10 +286,10 @@ void ToggleTocBox(MainWindow* win) {
         return;
     }
     if (win->tocVisible) {
-        SetSidebarVisibility(win, false, gGlobalPrefs->showFavorites);
+        SetSidebarVisibility(win, false, gGlobalPrefs->showFavorites, win->libraryVisible);
         return;
     }
-    SetSidebarVisibility(win, true, gGlobalPrefs->showFavorites);
+    SetSidebarVisibility(win, true, gGlobalPrefs->showFavorites, win->libraryVisible);
     if (win->tocVisible) {
         HwndSetFocus(win->tocTreeView->hwnd);
     }
@@ -385,7 +385,7 @@ void ExpandTocToCurrentPage(MainWindow* win) {
     }
     // make sure the bookmarks (table of contents) sidebar is visible
     if (!win->tocVisible) {
-        SetSidebarVisibility(win, true, gGlobalPrefs->showFavorites);
+        SetSidebarVisibility(win, true, gGlobalPrefs->showFavorites, win->libraryVisible);
     }
     if (!win->tocLoaded || !win->tocVisible) {
         return;
