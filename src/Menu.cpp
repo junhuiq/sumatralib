@@ -1023,11 +1023,11 @@ static MenuDef menuDefContext[] = {
     },
     // note: strings cannot be "" or else items are not there
     {
-        "Add to favorites",
+        _TRN("Add to favorites"),
         CmdFavoriteAdd,
     },
     {
-        "Remove from favorites",
+        _TRN("Remove from favorites"),
         CmdFavoriteDel,
     },
     {

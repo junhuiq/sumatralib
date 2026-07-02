@@ -246,7 +246,7 @@ static void StopCodex(MainWindow* win) {
     if (tab && tab->codexProcess) {
         CodexBuildLog("stop", tab->codexSessionId ? tab->codexSessionId : StrL("(no session)"));
         CloseCodexProcess(tab, true);
-        WebViewAddError(win, "Stopped by user.");
+        WebViewAddError(win, _TRA("Stopped by user."));
         SetCodexWorking(win, false);
     }
 }
@@ -1050,7 +1050,7 @@ static void SendCodexMessage(MainWindow* win) {
     TempStr codexPath = FindCodexExecutableTemp();
     if (!codexPath) {
         CodexBuildLog("error", "Cannot find codex executable");
-        WebViewAddError(win, "Cannot find codex. Is OpenAI Codex installed?");
+        WebViewAddError(win, _TRA("Cannot find codex. Is OpenAI Codex installed?"));
         SetCodexWorking(win, false);
         return;
     }
@@ -1082,7 +1082,7 @@ static void SendCodexMessage(MainWindow* win) {
     AIChatProcessLaunchResult launch;
     if (!AIChatLaunchProcessWithStdoutPipe(cmdLine, dir, &launch)) {
         CodexBuildLog("error", "Failed to launch codex process");
-        WebViewAddError(win, "Failed to launch codex. Is it installed and in PATH?");
+        WebViewAddError(win, _TRA("Failed to launch codex. Is it installed and in PATH?"));
         SetCodexWorking(win, false);
         return;
     }

@@ -164,7 +164,7 @@ void ExplainSelectedText(MainWindow* win, Str selectedText, bool inDepth) {
         return;
     }
 
-    TempStr prefix = inDepth ? str::DupTemp(_TRA("Please explain in depth:")) : str::DupTemp(_TRA("Please explain briefly:"));
+    TempStr prefix = inDepth ? str::DupTemp(_TRA("Please explain in depth:")) : str::DupTemp(_TRA("Please briefly explain:"));
     TempStr prompt = fmt("%s %s", prefix, selectedText);
 
     // ensure AI workspace is visible

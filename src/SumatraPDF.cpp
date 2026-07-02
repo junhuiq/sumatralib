@@ -5142,13 +5142,13 @@ static void OnMenuChangeBackgroundColor(MainWindow* win) {
         }
     }
 
-    Str allFilesLabel = "For all &PDF files";
+    Str allFilesLabel = _TRA("For all &PDF files");
     if (isCbx) {
-        allFilesLabel = "For all &comic books";
+        allFilesLabel = _TRA("For all &comic books");
     } else if (isImage) {
-        allFilesLabel = "For all &images";
+        allFilesLabel = _TRA("For all &images");
     } else if (isEbook) {
-        allFilesLabel = "For all &ebooks";
+        allFilesLabel = _TRA("For all &ebooks");
     }
 
     BgColorResult result;

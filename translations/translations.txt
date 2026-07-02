@@ -26359,9 +26359,9 @@ cn:简要解释
 :Explain in depth
 cn:深入解释
 :Please briefly explain:
-cn:请简要解读：
+cn:请简要解释：
 :Please explain in depth:
-cn:请深入解读：
+cn:请深入解释：
 :AI Assistance
 cn:AI辅助
 :Ask AI

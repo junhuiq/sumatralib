@@ -55,9 +55,7 @@ struct LibraryTreeModel : TreeModel {
         delete allNodes;
     }
 
-    TreeItem Root() override {
-        return (TreeItem)root;
-    }
+    TreeItem Root() override { return (TreeItem)root; }
 
     Str Text(TreeItem ti) override {
         auto* node = (LibraryNode*)ti;
@@ -90,17 +88,13 @@ struct LibraryTreeModel : TreeModel {
         return node->isExpanded;
     }
 
-    bool IsChecked(TreeItem) override {
-        return false;
-    }
+    bool IsChecked(TreeItem) override { return false; }
 
     void SetHandle(TreeItem, HTREEITEM) override {
         // not needed for library tree
     }
 
-    HTREEITEM GetHandle(TreeItem) override {
-        return nullptr;
-    }
+    HTREEITEM GetHandle(TreeItem) override { return nullptr; }
 };
 
 // ── Tree building / flattening ─────────────────────────────────────
@@ -302,7 +296,7 @@ static void LibraryMoveNodeToNewParent(MainWindow* win, LibraryNode* node, Libra
 }
 
 static LRESULT CALLBACK WndProcLibraryBox(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR subclassId,
-                                           DWORD_PTR data) {
+                                          DWORD_PTR data) {
     MainWindow* win = FindMainWindowByHwnd(hwnd);
     if (!win) {
         return DefSubclassProc(hwnd, msg, wp, lp);
@@ -409,9 +403,12 @@ static void RemoveLibraryNode(MainWindow* win, LibraryNode* node) {
     }
 
     // confirm with user before removing
-    const WCHAR* msg = node->IsBook() ? L"Remove this book from the library?\n\nThe file will NOT be deleted from your computer."
-                                     : L"Remove this folder and its contents from the library?\n\nThe files will NOT be deleted from your computer.";
-    int res = MessageBoxW(win->hwndFrame, msg, L"Remove from Library", MB_YESNO | MB_ICONQUESTION);
+    Str msg = node->IsBook()
+                  ? _TRA("Remove this book from the library?\n\nThe file will NOT be deleted from your computer.")
+                  : _TRA(
+                        "Remove this folder and its contents from the library?\n\nThe files will NOT be deleted from "
+                        "your computer.");
+    int res = MsgBox(win->hwndFrame, msg, _TRA("Remove from Library"), MB_YESNO | MB_ICONQUESTION);
     if (res != IDYES) {
         return;
     }
@@ -794,10 +791,9 @@ void CreateLibrary(MainWindow* win) {
 
     // Add tooltip to the "+" button
     {
-        HWND tooltipHwnd = CreateWindowExW(WS_EX_TOPMOST, TOOLTIPS_CLASS, nullptr,
-                                           WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
-                                           CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-                                           addButton->hwnd, nullptr, GetModuleHandle(nullptr), nullptr);
+        HWND tooltipHwnd = CreateWindowExW(
+            WS_EX_TOPMOST, TOOLTIPS_CLASS, nullptr, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, CW_USEDEFAULT,
+            CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, addButton->hwnd, nullptr, GetModuleHandle(nullptr), nullptr);
         if (tooltipHwnd) {
             TOOLINFOW ti{};
             ti.cbSize = sizeof(ti);

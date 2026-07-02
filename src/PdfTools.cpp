@@ -148,7 +148,7 @@ void PdfBakeDialog::DoBake() {
         StartLoadDocument(&args);
     } else {
         logf("PdfBakeDoIt: pdfbake_main failed with %d\n", res);
-        MessageBoxWarning(hwnd, "Failed to bake PDF file.", _TRA("Bake PDF"));
+        MessageBoxWarning(hwnd, _TRA("Failed to bake PDF file."), _TRA("Bake PDF"));
     }
 }
 
@@ -397,7 +397,7 @@ void PdfExtractTextDialog::DoExtract() {
         OpenPathInDefaultFileManager(path);
     } else {
         logf("PdfExtractTextDoIt: failed to extract text, isPdf: %d\n", (int)isPdf);
-        MessageBoxWarning(hwnd, "Failed to extract text.", _TRA("Extract Text"));
+        MessageBoxWarning(hwnd, _TRA("Failed to extract text."), _TRA("Extract Text"));
     }
 }
 
@@ -625,7 +625,7 @@ void PdfCompressDialog::DoCompress() {
         StartLoadDocument(&args);
     } else {
         logf("PdfCompressDoIt: pdfclean_main failed with %d\n", res);
-        MessageBoxWarning(hwnd, "Failed to compress PDF file.", _TRA("Compress PDF"));
+        MessageBoxWarning(hwnd, _TRA("Failed to compress PDF file."), _TRA("Compress PDF"));
     }
 }
 
@@ -824,7 +824,7 @@ void PdfDecompressDialog::DoDecompress() {
         StartLoadDocument(&args);
     } else {
         logf("PdfDecompressDoIt: pdfclean_main failed with %d\n", res);
-        MessageBoxWarning(hwnd, "Failed to decompress PDF file.", _TRA("Decompress PDF"));
+        MessageBoxWarning(hwnd, _TRA("Failed to decompress PDF file."), _TRA("Decompress PDF"));
     }
 }
 
@@ -1212,7 +1212,7 @@ void PdfDeletePageDialog::DoIt() {
     } else {
         logf("PdfDeletePageDoIt: pdfclean_main failed with %d for %s\n", res, op);
         Str msg =
-            isExtract ? StrL("Failed to extract pages from PDF file.") : StrL("Failed to delete pages from PDF file.");
+            isExtract ? _TRA("Failed to extract pages from PDF file.") : _TRA("Failed to delete pages from PDF file.");
         Str title = isExtract ? _TRA("Extract Pages From PDF") : _TRA("Delete Pages From PDF");
         MessageBoxWarning(hwnd, msg, title);
     }
@@ -1499,7 +1499,7 @@ void PdfEncryptDialog::DoEncrypt() {
         StartLoadDocument(&args);
     } else {
         logf("PdfEncryptDoIt: pdfclean_main failed with %d\n", res);
-        MessageBoxWarning(hwnd, "Failed to encrypt PDF file.", _TRA("Encrypt PDF"));
+        MessageBoxWarning(hwnd, _TRA("Failed to encrypt PDF file."), _TRA("Encrypt PDF"));
     }
 }
 
@@ -1740,7 +1740,7 @@ void PdfDecryptDialog::DoDecrypt() {
     } else {
         logf("PdfDecryptDoIt: pdfclean_main failed with %d, src: '%s', password len: %d\n", res, srcPath,
              len(password));
-        MessageBoxWarning(hwnd, "Failed to decrypt PDF file.", _TRA("Decrypt PDF"));
+        MessageBoxWarning(hwnd, _TRA("Failed to decrypt PDF file."), _TRA("Decrypt PDF"));
     }
 }
 

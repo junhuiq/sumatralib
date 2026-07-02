@@ -758,6 +758,10 @@ static INT_PTR CALLBACK Dialog_ChangeScrollbar_Proc(HWND hDlg, UINT msg, WPARAM 
             }
             CheckRadioButton(hDlg, IDC_SCROLLBAR_WINDOWS, IDC_SCROLLBAR_HIDDEN, checkId);
             HwndSetText(hDlg, _TRA("Change Scrollbar"));
+            HwndSetDlgItemText(hDlg, IDC_SCROLLBAR_WINDOWS, _TRA("&Windows"));
+            HwndSetDlgItemText(hDlg, IDC_SCROLLBAR_SMART, _TRA("&Smart Overlay"));
+            HwndSetDlgItemText(hDlg, IDC_SCROLLBAR_OVERLAY, _TRA("&Overlay"));
+            HwndSetDlgItemText(hDlg, IDC_SCROLLBAR_HIDDEN, _TRA("&Hidden"));
             HwndSetDlgItemText(hDlg, IDOK, _TRA("OK"));
             HwndSetDlgItemText(hDlg, IDCANCEL, _TRA("Cancel"));
             CenterDialog(hDlg);
@@ -1043,9 +1047,9 @@ static INT_PTR CALLBACK Sheet_Print_Advanced_Proc(HWND hDlg, UINT msg, WPARAM wp
             {
                 HWND hwndCb = GetDlgItem(hDlg, IDC_PRINT_ROTATE);
                 CbAddString(hwndCb, _TRA("None"));
-                CbAddString(hwndCb, "90°");
-                CbAddString(hwndCb, "180°");
-                CbAddString(hwndCb, "270°");
+                CbAddString(hwndCb, _TRA("90°"));
+                CbAddString(hwndCb, _TRA("180°"));
+                CbAddString(hwndCb, _TRA("270°"));
                 int rotIdx = (data->extraRotation / 90) % 4;
                 CbSetCurrentSelection(hwndCb, rotIdx);
             }
@@ -1466,9 +1470,11 @@ static INT_PTR CALLBACK Dialog_ChangeBgColor_Proc(HWND hDlg, UINT msg, WPARAM wp
                 DarkMode::setDarkWndSafe(hDlg);
             }
             HwndSetText(hDlg, data->title ? data->title : _TRA("Change Background Color"));
+            HwndSetDlgItemText(hDlg, IDC_BGCOL_RGB_LABEL, _TRA("RGB:"));
             HwndSetDlgItemText(hDlg, IDOK, _TRA("OK"));
             HwndSetDlgItemText(hDlg, IDCANCEL, _TRA("Cancel"));
             if (data->showRadioButtons) {
+                HwndSetDlgItemText(hDlg, IDC_BGCOL_THIS_FILE, _TRA("&This file"));
                 if (data->allFilesLabel) {
                     HwndSetDlgItemText(hDlg, IDC_BGCOL_ALL_FILES, data->allFilesLabel);
                 }
@@ -1745,6 +1751,9 @@ static INT_PTR CALLBACK Dialog_AIModelSettings_Proc(HWND hDlg, UINT msg, WPARAM 
 
             // translate dialog
             HwndSetText(hDlg, _TRA("AI Model Settings"));
+            HwndSetDlgItemText(hDlg, IDC_AI_MODEL_API_URL_LABEL, _TRA("API URL:"));
+            HwndSetDlgItemText(hDlg, IDC_AI_MODEL_API_KEY_LABEL, _TRA("API Key:"));
+            HwndSetDlgItemText(hDlg, IDC_AI_MODEL_MODEL_NAME_LABEL, _TRA("Model Name:"));
             HwndSetDlgItemText(hDlg, IDC_AI_MODEL_TEST_BTN, _TRA("Test"));
             HwndSetDlgItemText(hDlg, IDOK, _TRA("OK"));
             HwndSetDlgItemText(hDlg, IDCANCEL, _TRA("Cancel"));

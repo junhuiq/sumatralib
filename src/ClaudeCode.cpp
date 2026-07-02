@@ -247,7 +247,7 @@ static void StopClaude(MainWindow* win) {
     if (tab && tab->claudeProcess) {
         ClaudeCodeLog("stop", tab->claudeSessionId ? tab->claudeSessionId : StrL("(no session)"));
         CloseClaudeProcess(tab, true);
-        WebViewAddError(win, "Stopped by user.");
+        WebViewAddError(win, _TRA("Stopped by user."));
         SetClaudeWorking(win, false);
     }
 }
@@ -872,7 +872,7 @@ static void SendClaudeMessage(MainWindow* win) {
     TempStr claudePath = FindClaudeExecutableTemp();
     if (!claudePath) {
         ClaudeCodeLog("error", "Cannot find claude executable");
-        WebViewAddError(win, "Cannot find claude. Is Claude Code installed?");
+        WebViewAddError(win, _TRA("Cannot find claude. Is Claude Code installed?"));
         SetClaudeWorking(win, false);
         return;
     }
@@ -905,7 +905,7 @@ static void SendClaudeMessage(MainWindow* win) {
     AIChatProcessLaunchResult launch;
     if (!AIChatLaunchProcessWithStdoutPipe(cmdLine, dir, &launch)) {
         ClaudeCodeLog("error", "Failed to launch claude process");
-        WebViewAddError(win, "Failed to launch claude. Is it installed and in PATH?");
+        WebViewAddError(win, _TRA("Failed to launch claude. Is it installed and in PATH?"));
         SetClaudeWorking(win, false);
         return;
     }

@@ -2776,8 +2776,16 @@ void MessageBoxWarningSimple(HWND hwnd, WStr msg, WStr title) {
     MessageBoxW(hwnd, msg.s, title.s, type);
 }
 
-void MessageBoxNYI(HWND hwnd) {
-    MessageBoxWarningSimple(hwnd, L"Not Yet Implemented!", L"NYI");
+void MessageBoxNYI(HWND hwnd, Str msg, Str title) {
+    if (!msg) {
+        msg = StrL("Not Yet Implemented!");
+    }
+    if (!title) {
+        title = StrL("NYI");
+    }
+    TempWStr msgW = ToWStrTemp(msg);
+    TempWStr titleW = ToWStrTemp(title);
+    MessageBoxWarningSimple(hwnd, msgW, titleW);
 }
 
 void VariantInitBstr(VARIANT& urlVar, WStr s) {

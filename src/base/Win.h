@@ -187,7 +187,7 @@ void ResizeHwndToClientArea(HWND hwnd, int dx, int dy, bool hasMenu);
 void ResizeWindow(HWND, int dx, int dy);
 
 void MessageBoxWarningSimple(HWND hwnd, WStr msg, WStr title = WStr());
-void MessageBoxNYI(HWND hwnd);
+void MessageBoxNYI(HWND hwnd, Str msg = nullptr, Str title = nullptr);
 
 bool RegisterServerDLL(Str dllPath, Str args = Str());
 bool UnRegisterServerDLL(Str dllPath, Str args = Str());

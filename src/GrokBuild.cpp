@@ -245,7 +245,7 @@ static void StopGrok(MainWindow* win) {
     if (tab && tab->grokProcess) {
         GrokBuildLog("stop", tab->grokSessionId ? tab->grokSessionId : StrL("(no session)"));
         CloseGrokProcess(tab, true);
-        WebViewAddError(win, "Stopped by user.");
+        WebViewAddError(win, _TRA("Stopped by user."));
         SetGrokWorking(win, false);
     }
 }
@@ -932,7 +932,7 @@ static void SendGrokMessage(MainWindow* win) {
     TempStr grokPath = FindGrokExecutableTemp();
     if (!grokPath) {
         GrokBuildLog("error", "Cannot find grok executable");
-        WebViewAddError(win, "Cannot find grok. Is Grok Build installed?");
+        WebViewAddError(win, _TRA("Cannot find grok. Is Grok Build installed?"));
         SetGrokWorking(win, false);
         return;
     }
@@ -959,7 +959,7 @@ static void SendGrokMessage(MainWindow* win) {
     AIChatProcessLaunchResult launch;
     if (!AIChatLaunchProcessWithStdoutPipe(cmdLine, dir, &launch)) {
         GrokBuildLog("error", "Failed to launch grok process");
-        WebViewAddError(win, "Failed to launch grok. Is it installed and in PATH?");
+        WebViewAddError(win, _TRA("Failed to launch grok. Is it installed and in PATH?"));
         SetGrokWorking(win, false);
         return;
     }

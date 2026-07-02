@@ -19,44 +19,27 @@
 // English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+LANGUAGE LANG_ENGLISH,
+    SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Version
-//
+        /////////////////////////////////////////////////////////////////////////////
+        //
+        // Version
+        //
 
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION VER_RESOURCE
- PRODUCTVERSION VER_RESOURCE
- FILEFLAGSMASK 0x0L
+        VS_VERSION_INFO VERSIONINFO FILEVERSION VER_RESOURCE PRODUCTVERSION VER_RESOURCE FILEFLAGSMASK 0x0L
 #ifdef _DEBUG
- FILEFLAGS 0x1L
+    FILEFLAGS 0x1L
 #else
- FILEFLAGS 0x0L
+    FILEFLAGS 0x0L
 #endif
- FILEOS 0x40004L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "040904E4"
-        BEGIN
-            VALUE "FileDescription", kAppName
-            VALUE "FileVersion", VER_RESOURCE_STR
-            VALUE "LegalCopyright", kCopyrightStr
-            VALUE "ProductName", kAppName
-            VALUE "ProductVersion", VER_RESOURCE_STR
-            VALUE "CompanyName", kPublisherStr
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x409, 1252
-    END
-END
+    FILEOS 0x40004L FILETYPE 0x1L FILESUBTYPE 0x0L BEGIN BLOCK "StringFileInfo" BEGIN BLOCK "040904E4" BEGIN VALUE
+                                                               "FileDescription",
+    kAppName VALUE "FileVersion", VER_RESOURCE_STR VALUE "LegalCopyright", kCopyrightStr VALUE "ProductName",
+    kAppName VALUE "ProductVersion", VER_RESOURCE_STR VALUE "CompanyName",
+    kPublisherStr END END BLOCK "VarFileInfo" BEGIN VALUE "Translation", 0x409,
+    1252 END END
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -64,268 +47,217 @@ END
 // for combined executable / installer, it's an lzsa archive that contains
 // libmupdf.dll, PdfPreview.dll and PdfFilter.dll
 #ifdef INSTALL_PAYLOAD_ZIP
-IDR_DLL_PAK             RCDATA               QM(INSTALL_PAYLOAD_ZIP)
+        IDR_DLL_PAK RCDATA QM(INSTALL_PAYLOAD_ZIP)
 #endif
 
-IDR_TRANSLATIONS        RCDATA "..\\translations\\translations.txt.lzsa"
+IDR_TRANSLATIONS RCDATA "..\\translations\\translations.txt.lzsa"
 
-IDR_MANUAL_PAK          RCDATA               "..\\docs\\manual.dat"
+    IDR_MANUAL_PAK RCDATA "..\\docs\\manual.dat"
 
-IDR_CLAUDE_MARKED_JS    RCDATA               "..\\ext\\marked\\marked.min.js"
-
-/////////////////////////////////////////////////////////////////////////////
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_SUMATRAPDF          ICON "..\\gfx\\SumatraPDF-smaller.ico"
-// for compath with pre 3.4 registry association for pre-win10
-// have icon as ,1, which is index of this icon. unless we delete
-// those old registry on install, the icon would change
-2                       ICON "..\\gfx\\SumatraPDF-smaller.ico"
-3                       ICON "..\\gfx\\gfxalt\\epub-32bit.ico"
-4                       ICON "..\\gfx\\gfxalt\\cbx-32bit.ico"
-5                       ICON "..\\gfx\\gfxalt\\chm-32bit.ico"
-6                       ICON "..\\gfx\\gfxalt\\djvu-32bit.ico"
+    IDR_CLAUDE_MARKED_JS RCDATA "..\\ext\\marked\\marked.min.js"
 
     /////////////////////////////////////////////////////////////////////////////
 
-IDB_RELOADING_CUE       BITMAP                  "reloading.bmp"
+    // Icon with lowest ID value placed first to ensure application icon
+    // remains consistent on all systems.
+    IDI_SUMATRAPDF ICON "..\\gfx\\SumatraPDF-smaller.ico"
+    // for compath with pre 3.4 registry association for pre-win10
+    // have icon as ,1, which is index of this icon. unless we delete
+    // those old registry on install, the icon would change
+    2 ICON "..\\gfx\\SumatraPDF-smaller.ico" 3 ICON "..\\gfx\\gfxalt\\epub-32bit.ico" 4 ICON
+    "..\\gfx\\gfxalt\\cbx-32bit.ico" 5 ICON "..\\gfx\\gfxalt\\chm-32bit.ico" 6 ICON "..\\gfx\\gfxalt\\djvu-32bit.ico"
 
-/////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////
 
-IDD_DIALOG_GOTO_PAGE DIALOGEX 0, 0, 158, 45
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Go to page"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "&Go to page:",IDC_STATIC,6,8,60,9
-    EDITTEXT        IDC_GOTO_PAGE_EDIT,66,6,30,13,ES_RIGHT | ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "(of 99999)",IDC_GOTO_PAGE_LABEL_OF,102,8,50,9
-    DEFPUSHBUTTON   "Go to page",IDOK,27,25,70,14
-    PUSHBUTTON      "Cancel",IDCANCEL,102,25,50,14
-END
+    IDB_RELOADING_CUE BITMAP "reloading.bmp"
 
-IDD_DIALOG_FIND DIALOGEX 0, 0, 247, 52
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Find"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "&Find what:",IDC_STATIC,6,8,60,9
-    EDITTEXT        IDC_FIND_EDIT,66,6,120,13,ES_AUTOHSCROLL
-    CONTROL         "&Match case",IDC_MATCH_CASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,180,9
-    LTEXT           "Hint: Use the F3 key for finding again",IDC_FIND_NEXT_HINT,6,37,180,9
-    DEFPUSHBUTTON   "Find",IDOK,191,6,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,191,24,50,14
-END
+    /////////////////////////////////////////////////////////////////////////////
 
-IDD_DIALOG_GET_PASSWORD DIALOGEX 0, 0, 182, 83
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Enter password"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "Enter password for test.pdf",IDC_GET_PASSWORD_LABEL,6,6,170,9
-    LTEXT           "&Password:",IDC_STATIC,6,22,64,9
-    EDITTEXT        IDC_GET_PASSWORD_EDIT,70,20,106,13,ES_PASSWORD | ES_AUTOHSCROLL
-    CONTROL         "&Show password",IDC_SHOW_PASSWORD,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,37,170,9
-    CONTROL         "&Remember the password for this file",IDC_REMEMBER_PASSWORD,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,49,170,9
-    DEFPUSHBUTTON   "OK",IDOK,70,63,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,126,63,50,14
-END
+    IDD_DIALOG_GOTO_PAGE DIALOGEX 0,
+    0, 158,
+    45 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU CAPTION "Go to page" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN LTEXT "&Go to page:", IDC_STATIC, 6, 8, 60, 9 EDITTEXT IDC_GOTO_PAGE_EDIT, 66, 6,
+    30, 13, ES_RIGHT | ES_AUTOHSCROLL | ES_NUMBER LTEXT "(of 99999)", IDC_GOTO_PAGE_LABEL_OF, 102, 8, 50,
+    9 DEFPUSHBUTTON "Go to page", IDOK, 27, 25, 70, 14 PUSHBUTTON "Cancel", IDCANCEL, 102, 25, 50,
+    14 END
 
-IDD_DIALOG_CHANGE_LANGUAGE DIALOGEX 0, 0, 200, 275
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Change Language"
-FONT 10, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    EDITTEXT        IDC_CHANGE_LANG_SEARCH,6,6,188,14,ES_AUTOHSCROLL | WS_TABSTOP
-    LISTBOX         IDC_CHANGE_LANG_LANG_LIST,6,24,188,225,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,88,255,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,144,255,50,14
-END
+        IDD_DIALOG_FIND DIALOGEX 0,
+    0, 247,
+    52 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU CAPTION "Find" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN LTEXT "&Find what:", IDC_STATIC, 6, 8, 60, 9 EDITTEXT IDC_FIND_EDIT, 66, 6, 120,
+    13, ES_AUTOHSCROLL CONTROL "&Match case", IDC_MATCH_CASE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 6, 24, 180,
+    9 LTEXT "Hint: Use the F3 key for finding again", IDC_FIND_NEXT_HINT, 6, 37, 180, 9 DEFPUSHBUTTON "Find", IDOK, 191,
+    6, 50, 14 PUSHBUTTON "Cancel", IDCANCEL, 191, 24, 50,
+    14 END
 
-IDD_DIALOG_SETTINGS DIALOGEX 0, 0, 240, 223
-STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-CAPTION "Settings"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "View",IDC_SECTION_VIEW,6,6,228,75
-    LTEXT           "Default &Layout:",IDC_DEFAULT_LAYOUT_LABEL,12,19,108,9
-    COMBOBOX        IDC_DEFAULT_LAYOUT,120,17,108,64,CBS_DROPDOWNLIST | WS_TABSTOP
-    LTEXT           "Default &Zoom:",IDC_DEFAULT_ZOOM_LABEL,12,36,108,9
-    COMBOBOX        IDC_DEFAULT_ZOOM,120,34,108,149,CBS_DROPDOWN | WS_TABSTOP
-    CONTROL         "Show the &bookmarks sidebar when available",IDC_DEFAULT_SHOW_TOC,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,53,216,9
-    CONTROL         "&Remember these settings for each document",IDC_REMEMBER_STATE_PER_DOCUMENT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,66,216,9
-    GROUPBOX        "Advanced",IDC_SECTION_ADVANCED,6,87,228,52
-    CONTROL         "Use &tabs",IDC_USE_TABS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,97,216,9
-    CONTROL         "Automatically check for &updates",IDC_CHECK_FOR_UPDATES,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,110,216,9
-    CONTROL         "Remember &opened files",IDC_REMEMBER_OPENED_FILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,123,216,9
-    GROUPBOX        "Set inverse search command-line",IDC_SECTION_INVERSESEARCH,6,145,228,52
-    LTEXT           "Enter the command-line to invoke when you double-click on the PDF document:",IDC_CMDLINE_LABEL,12,157,216,18
-    COMBOBOX        IDC_CMDLINE,12,177,216,13,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_HASSTRINGS | CBS_DISABLENOSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,128,203,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,184,203,50,14
-END
+        IDD_DIALOG_GET_PASSWORD DIALOGEX 0,
+    0, 182,
+    83 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
+        WS_SYSMENU CAPTION "Enter password" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN LTEXT "Enter password for test.pdf", IDC_GET_PASSWORD_LABEL, 6, 6, 170,
+    9 LTEXT "&Password:", IDC_STATIC, 6, 22, 64, 9 EDITTEXT IDC_GET_PASSWORD_EDIT, 70, 20, 106, 13,
+    ES_PASSWORD | ES_AUTOHSCROLL CONTROL "&Show password", IDC_SHOW_PASSWORD, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 6,
+    37, 170, 9 CONTROL "&Remember the password for this file", IDC_REMEMBER_PASSWORD, "Button",
+    BS_AUTOCHECKBOX | WS_TABSTOP, 6, 49, 170, 9 DEFPUSHBUTTON "OK", IDOK, 70, 63, 50, 14 PUSHBUTTON "Cancel", IDCANCEL,
+    126, 63, 50,
+    14 END
 
-IDD_DIALOG_CUSTOM_ZOOM DIALOGEX 0, 0, 116, 60
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Zoom factor"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "&Magnification:",IDC_STATIC,6,6,104,9
-    COMBOBOX        IDC_DEFAULT_ZOOM,6,20,104,149,CBS_DROPDOWN | WS_TABSTOP
-    DEFPUSHBUTTON   "Zoom",IDOK,6,40,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,60,40,50,14
-END
+        IDD_DIALOG_CHANGE_LANGUAGE DIALOGEX 0,
+    0, 200,
+    275 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU |
+        WS_THICKFRAME CAPTION "Change Language" FONT 10,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN EDITTEXT IDC_CHANGE_LANG_SEARCH, 6, 6, 188, 14,
+    ES_AUTOHSCROLL | WS_TABSTOP LISTBOX IDC_CHANGE_LANG_LANG_LIST, 6, 24, 188, 225,
+    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP DEFPUSHBUTTON "OK", IDOK, 88, 255, 50, 14 PUSHBUTTON "Cancel",
+    IDCANCEL, 144, 255, 50,
+    14 END
 
-IDD_PROPSHEET_PRINT_ADVANCED DIALOGEX 0, 0, 292, 194
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Advanced"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Print range",IDC_SECTION_PRINT_RANGE,7,7,278,52
-    CONTROL         "&All selected pages",IDC_PRINT_RANGE_ALL,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,18,264,9
-    CONTROL         "&Odd pages only",IDC_PRINT_RANGE_ODD,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,31,264,9
-    CONTROL         "&Even pages only",IDC_PRINT_RANGE_EVEN,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,44,264,9
-    GROUPBOX        "Page scaling",IDC_SECTION_PRINT_SCALE,7,62,278,65
-    CONTROL         "&Shrink pages to printable area (if necessary)",IDC_PRINT_SCALE_SHRINK,
-                    "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,74,264,9
-    CONTROL         "&Fit pages to printable area",IDC_PRINT_SCALE_FIT,
-                    "Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,87,264,9
-    CONTROL         "S&tretch pages to fill paper (ignore aspect ratio)",IDC_PRINT_SCALE_STRETCH,
-                    "Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,100,264,9
-    CONTROL         "&Use original page sizes",IDC_PRINT_SCALE_NONE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,113,264,9
-    CONTROL         "Center page hori&zontally on the paper",IDC_PRINT_CENTER_HORIZONTALLY,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,133,278,10
-    CONTROL         "Choose &paper source by document page size",IDC_PRINT_PAPER_SOURCE_BY_SIZE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,146,278,10
-    CONTROL         "Print each page at its &document page size (mixed sizes)",IDC_PRINT_PER_PAGE_PAPER_SIZE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,159,278,10
-    LTEXT           "&Rotate printout:",IDC_PRINT_ROTATE_LABEL,7,175,72,9
-    COMBOBOX        IDC_PRINT_ROTATE,82,173,90,60,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-END
+        IDD_DIALOG_SETTINGS DIALOGEX 0,
+    0, 240,
+    223 STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE |
+        WS_CAPTION | WS_SYSMENU CAPTION "Settings" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN GROUPBOX "View", IDC_SECTION_VIEW, 6, 6, 228,
+    75 LTEXT "Default &Layout:", IDC_DEFAULT_LAYOUT_LABEL, 12, 19, 108, 9 COMBOBOX IDC_DEFAULT_LAYOUT, 120, 17, 108, 64,
+    CBS_DROPDOWNLIST | WS_TABSTOP LTEXT "Default &Zoom:", IDC_DEFAULT_ZOOM_LABEL, 12, 36, 108,
+    9 COMBOBOX IDC_DEFAULT_ZOOM, 120, 34, 108, 149,
+    CBS_DROPDOWN | WS_TABSTOP CONTROL "Show the &bookmarks sidebar when available", IDC_DEFAULT_SHOW_TOC, "Button",
+    BS_AUTOCHECKBOX | WS_TABSTOP, 12, 53, 216, 9 CONTROL "&Remember these settings for each document",
+    IDC_REMEMBER_STATE_PER_DOCUMENT, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 12, 66, 216, 9 GROUPBOX "Advanced",
+    IDC_SECTION_ADVANCED, 6, 87, 228, 52 CONTROL "Use &tabs", IDC_USE_TABS, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 12,
+    97, 216, 9 CONTROL "Automatically check for &updates", IDC_CHECK_FOR_UPDATES, "Button",
+    BS_AUTOCHECKBOX | WS_TABSTOP, 12, 110, 216, 9 CONTROL "Remember &opened files", IDC_REMEMBER_OPENED_FILES, "Button",
+    BS_AUTOCHECKBOX | WS_TABSTOP, 12, 123, 216, 9 GROUPBOX "Set inverse search command-line", IDC_SECTION_INVERSESEARCH,
+    6, 145, 228,
+    52 LTEXT "Enter the command-line to invoke when you double-click on the PDF document:", IDC_CMDLINE_LABEL, 12, 157,
+    216, 18 COMBOBOX IDC_CMDLINE, 12, 177, 216, 13,
+    CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_HASSTRINGS | CBS_DISABLENOSCROLL | WS_TABSTOP DEFPUSHBUTTON "OK", IDOK, 128,
+    203, 50, 14 PUSHBUTTON "Cancel", IDCANCEL, 184, 203, 50,
+    14 END
 
-IDD_DIALOG_FAV_ADD DIALOGEX 0, 0, 236, 71
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Add a favorite"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,123,50,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,179,50,50,14
-    LTEXT           "Add page %s to favorites with (optional) name:",IDC_ADD_PAGE_STATIC,7,8,222,8
-    EDITTEXT        IDC_FAV_NAME_EDIT,7,20,222,14,ES_AUTOHSCROLL
-END
+        IDD_DIALOG_CUSTOM_ZOOM DIALOGEX 0,
+    0, 116,
+    60 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU CAPTION "Zoom factor" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN LTEXT "&Magnification:", IDC_STATIC, 6, 6, 104, 9 COMBOBOX IDC_DEFAULT_ZOOM, 6,
+    20, 104, 149, CBS_DROPDOWN | WS_TABSTOP DEFPUSHBUTTON "Zoom", IDOK, 6, 40, 50, 14 PUSHBUTTON "Cancel", IDCANCEL, 60,
+    40, 50,
+    14 END
 
-IDD_DIALOG_CHANGE_BG_COLOR DIALOGEX 0, 0, 260, 206
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Change Background Color"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_BGCOL_COLORAREA,"Static",SS_OWNERDRAW | SS_NOTIFY | WS_BORDER,6,6,248,100
-    LTEXT           "RGB:",IDC_STATIC,6,114,18,10
-    EDITTEXT        IDC_BGCOL_EDIT,26,112,100,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "",IDC_BGCOL_PREVIEW,130,113,28,12,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_PRESET_FIRST,6,132,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_PRESET_FIRST+1,37,132,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_PRESET_FIRST+2,68,132,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST,99,132,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+1,130,132,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+2,161,132,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+3,192,132,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+4,223,132,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+5,6,152,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+6,37,152,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+7,68,152,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+8,99,152,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+9,130,152,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+10,161,152,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+11,192,152,28,16,BS_OWNERDRAW
-    PUSHBUTTON      "",IDC_BGCOL_CUSTOM_FIRST+12,223,152,28,16,BS_OWNERDRAW
-    CONTROL         "&This file",IDC_BGCOL_THIS_FILE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,6,174,60,10
-    CONTROL         "For all &PDF files",IDC_BGCOL_ALL_FILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,70,174,100,10
-    DEFPUSHBUTTON   "OK",IDOK,144,188,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,200,188,50,14
-END
+        IDD_PROPSHEET_PRINT_ADVANCED DIALOGEX 0,
+    0, 292,
+    194 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU CAPTION "Advanced" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN GROUPBOX "Print range", IDC_SECTION_PRINT_RANGE, 7, 7, 278,
+    52 CONTROL "&All selected pages", IDC_PRINT_RANGE_ALL, "Button", BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP, 14, 18,
+    264, 9 CONTROL "&Odd pages only", IDC_PRINT_RANGE_ODD, "Button", BS_AUTORADIOBUTTON | WS_TABSTOP, 14, 31, 264,
+    9 CONTROL "&Even pages only", IDC_PRINT_RANGE_EVEN, "Button", BS_AUTORADIOBUTTON | WS_TABSTOP, 14, 44, 264,
+    9 GROUPBOX "Page scaling", IDC_SECTION_PRINT_SCALE, 7, 62, 278,
+    65 CONTROL "&Shrink pages to printable area (if necessary)", IDC_PRINT_SCALE_SHRINK, "Button",
+    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP, 14, 74, 264, 9 CONTROL "&Fit pages to printable area",
+    IDC_PRINT_SCALE_FIT, "Button", BS_AUTORADIOBUTTON | WS_TABSTOP, 14, 87, 264,
+    9 CONTROL "S&tretch pages to fill paper (ignore aspect ratio)", IDC_PRINT_SCALE_STRETCH, "Button",
+    BS_AUTORADIOBUTTON | WS_TABSTOP, 14, 100, 264, 9 CONTROL "&Use original page sizes", IDC_PRINT_SCALE_NONE, "Button",
+    BS_AUTORADIOBUTTON | WS_TABSTOP, 14, 113, 264, 9 CONTROL "Center page hori&zontally on the paper",
+    IDC_PRINT_CENTER_HORIZONTALLY, "Button", BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP, 7, 133, 278,
+    10 CONTROL "Choose &paper source by document page size", IDC_PRINT_PAPER_SOURCE_BY_SIZE, "Button",
+    BS_AUTOCHECKBOX | WS_TABSTOP, 7, 146, 278, 10 CONTROL "Print each page at its &document page size (mixed sizes)",
+    IDC_PRINT_PER_PAGE_PAPER_SIZE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 7, 159, 278,
+    10 LTEXT "&Rotate printout:", IDC_PRINT_ROTATE_LABEL, 7, 175, 72, 9 COMBOBOX IDC_PRINT_ROTATE, 82, 173, 90, 60,
+    CBS_DROPDOWNLIST | WS_VSCROLL |
+        WS_TABSTOP END
 
-IDD_DIALOG_INVERSE_SEARCH DIALOGEX 0, 0, 360, 80
-STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-CAPTION "Set inverse search command-line"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Set inverse search command-line",IDC_SECTION_INVERSESEARCH,6,6,348,52
-    LTEXT           "Enter the command-line to invoke when you double-click on the PDF document:",IDC_CMDLINE_LABEL,12,18,336,18
-    COMBOBOX        IDC_CMDLINE,12,38,336,80,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_HASSTRINGS | CBS_DISABLENOSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Help",IDC_INVERSE_SEARCH_HELP,6,62,50,14
-    DEFPUSHBUTTON   "OK",IDOK,248,62,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,304,62,50,14
-END
+            IDD_DIALOG_FAV_ADD DIALOGEX 0,
+    0, 236,
+    71 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
+        WS_SYSMENU CAPTION "Add a favorite" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN DEFPUSHBUTTON "OK", IDOK, 123, 50, 50, 14 PUSHBUTTON "Cancel", IDCANCEL, 179, 50,
+    50, 14 LTEXT "Add page %s to favorites with (optional) name:", IDC_ADD_PAGE_STATIC, 7, 8, 222,
+    8 EDITTEXT IDC_FAV_NAME_EDIT, 7, 20, 222, 14,
+    ES_AUTOHSCROLL END
 
-IDD_DIALOG_AI_MODEL_SETTINGS DIALOGEX 0, 0, 280, 130
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "AI Model Settings"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "API URL:",IDC_STATIC,10,12,55,12
-    EDITTEXT        IDC_AI_MODEL_API_URL,75,10,195,12,ES_AUTOHSCROLL
-    LTEXT           "API Key:",IDC_STATIC,10,30,55,12
-    EDITTEXT        IDC_AI_MODEL_API_KEY,75,28,195,12,ES_AUTOHSCROLL
-    LTEXT           "Model Name:",IDC_STATIC,10,48,55,12
-    EDITTEXT        IDC_AI_MODEL_MODEL_NAME,75,46,195,12,ES_AUTOHSCROLL
-    LTEXT           "",IDC_AI_MODEL_STATUS,10,65,260,12
-    PUSHBUTTON      "Test",IDC_AI_MODEL_TEST_BTN,130,84,60,18
-    DEFPUSHBUTTON   "OK",IDOK,200,84,60,18
-    PUSHBUTTON      "Cancel",IDCANCEL,130,84,60,18
-END
+        IDD_DIALOG_CHANGE_BG_COLOR DIALOGEX 0,
+    0, 260,
+    206 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
+        WS_SYSMENU CAPTION "Change Background Color" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN CONTROL "", IDC_BGCOL_COLORAREA, "Static", SS_OWNERDRAW | SS_NOTIFY | WS_BORDER,
+    6, 6, 248, 100 LTEXT "RGB:", IDC_BGCOL_RGB_LABEL, 6, 114, 18, 10 EDITTEXT IDC_BGCOL_EDIT, 26, 112, 100, 14,
+    ES_AUTOHSCROLL PUSHBUTTON "", IDC_BGCOL_PREVIEW, 130, 113, 28, 12, BS_OWNERDRAW PUSHBUTTON "",
+    IDC_BGCOL_PRESET_FIRST, 6, 132, 28, 16, BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_PRESET_FIRST + 1, 37, 132, 28, 16,
+    BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_PRESET_FIRST + 2, 68, 132, 28, 16, BS_OWNERDRAW PUSHBUTTON "",
+    IDC_BGCOL_CUSTOM_FIRST, 99, 132, 28, 16, BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_CUSTOM_FIRST + 1, 130, 132, 28, 16,
+    BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_CUSTOM_FIRST + 2, 161, 132, 28, 16, BS_OWNERDRAW PUSHBUTTON "",
+    IDC_BGCOL_CUSTOM_FIRST + 3, 192, 132, 28, 16, BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_CUSTOM_FIRST + 4, 223, 132, 28,
+    16, BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_CUSTOM_FIRST + 5, 6, 152, 28, 16, BS_OWNERDRAW PUSHBUTTON "",
+    IDC_BGCOL_CUSTOM_FIRST + 6, 37, 152, 28, 16, BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_CUSTOM_FIRST + 7, 68, 152, 28,
+    16, BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_CUSTOM_FIRST + 8, 99, 152, 28, 16, BS_OWNERDRAW PUSHBUTTON "",
+    IDC_BGCOL_CUSTOM_FIRST + 9, 130, 152, 28, 16, BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_CUSTOM_FIRST + 10, 161, 152, 28,
+    16, BS_OWNERDRAW PUSHBUTTON "", IDC_BGCOL_CUSTOM_FIRST + 11, 192, 152, 28, 16, BS_OWNERDRAW PUSHBUTTON "",
+    IDC_BGCOL_CUSTOM_FIRST + 12, 223, 152, 28, 16, BS_OWNERDRAW CONTROL "&This file", IDC_BGCOL_THIS_FILE, "Button",
+    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP, 6, 174, 60, 10 CONTROL "For all &PDF files", IDC_BGCOL_ALL_FILES,
+    "Button", BS_AUTORADIOBUTTON | WS_TABSTOP, 70, 174, 100, 10 DEFPUSHBUTTON "OK", IDOK, 144, 188, 50,
+    14 PUSHBUTTON "Cancel", IDCANCEL, 200, 188, 50,
+    14 END
 
-IDD_DIALOG_CHANGE_SCROLLBAR DIALOGEX 0, 0, 130, 90
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Change Scrollbar"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "&Windows",IDC_SCROLLBAR_WINDOWS,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,6,6,118,10
-    CONTROL         "&Smart Overlay",IDC_SCROLLBAR_SMART,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,6,20,118,10
-    CONTROL         "&Overlay",IDC_SCROLLBAR_OVERLAY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,6,34,118,10
-    CONTROL         "&Hidden",IDC_SCROLLBAR_HIDDEN,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,6,48,118,10
-    DEFPUSHBUTTON   "OK",IDOK,14,68,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,70,68,50,14
-END
+        IDD_DIALOG_INVERSE_SEARCH DIALOGEX 0,
+    0, 360,
+    80 STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE |
+        WS_CAPTION | WS_SYSMENU CAPTION "Set inverse search command-line" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN GROUPBOX "Set inverse search command-line", IDC_SECTION_INVERSESEARCH, 6, 6, 348,
+    52 LTEXT "Enter the command-line to invoke when you double-click on the PDF document:", IDC_CMDLINE_LABEL, 12, 18,
+    336, 18 COMBOBOX IDC_CMDLINE, 12, 38, 336, 80,
+    CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_HASSTRINGS | CBS_DISABLENOSCROLL | WS_TABSTOP PUSHBUTTON "Help",
+    IDC_INVERSE_SEARCH_HELP, 6, 62, 50, 14 DEFPUSHBUTTON "OK", IDOK, 248, 62, 50, 14 PUSHBUTTON "Cancel", IDCANCEL, 304,
+    62, 50,
+    14 END
 
-/////////////////////////////////////////////////////////////////////////////
+        IDD_DIALOG_AI_MODEL_SETTINGS DIALOGEX 0,
+    0, 280,
+    130 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
+        WS_SYSMENU CAPTION "AI Model Settings" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN LTEXT "API URL:", IDC_AI_MODEL_API_URL_LABEL, 10, 12, 55,
+    12 EDITTEXT IDC_AI_MODEL_API_URL, 75, 10, 195, 12, ES_AUTOHSCROLL LTEXT "API Key:", IDC_AI_MODEL_API_KEY_LABEL, 10,
+    30, 55, 12 EDITTEXT IDC_AI_MODEL_API_KEY, 75, 28, 195, 12,
+    ES_AUTOHSCROLL LTEXT "Model Name:", IDC_AI_MODEL_MODEL_NAME_LABEL, 10, 48, 55, 12 EDITTEXT IDC_AI_MODEL_MODEL_NAME,
+    75, 46, 195, 12, ES_AUTOHSCROLL LTEXT "", IDC_AI_MODEL_STATUS, 10, 65, 260, 12 PUSHBUTTON "Test",
+    IDC_AI_MODEL_TEST_BTN, 130, 84, 60, 18 DEFPUSHBUTTON "OK", IDOK, 200, 84, 60, 18 PUSHBUTTON "Cancel", IDCANCEL, 130,
+    84, 60,
+    18 END
 
-1                       RT_MANIFEST          "SumatraPDF.exe.manifest"
+        IDD_DIALOG_CHANGE_SCROLLBAR DIALOGEX 0,
+    0, 130,
+    90 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
+        WS_SYSMENU CAPTION "Change Scrollbar" FONT 8,
+    "MS Shell Dlg", 400, 0, 0x1 BEGIN CONTROL "&Windows", IDC_SCROLLBAR_WINDOWS, "Button",
+    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP, 6, 6, 118, 10 CONTROL "&Smart Overlay", IDC_SCROLLBAR_SMART, "Button",
+    BS_AUTORADIOBUTTON | WS_TABSTOP, 6, 20, 118, 10 CONTROL "&Overlay", IDC_SCROLLBAR_OVERLAY, "Button",
+    BS_AUTORADIOBUTTON | WS_TABSTOP, 6, 34, 118, 10 CONTROL "&Hidden", IDC_SCROLLBAR_HIDDEN, "Button",
+    BS_AUTORADIOBUTTON | WS_TABSTOP, 6, 48, 118, 10 DEFPUSHBUTTON "OK", IDOK, 14, 68, 50, 14 PUSHBUTTON "Cancel",
+    IDCANCEL, 70, 68, 50,
+    14 END
+
+    /////////////////////////////////////////////////////////////////////////////
+
+    1 RT_MANIFEST "SumatraPDF.exe.manifest"
 
 #ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // TEXTINCLUDE
+    //
 
-1 TEXTINCLUDE
-BEGIN
-    "resource.h\0"
-END
+    1 TEXTINCLUDE BEGIN "resource.h\0" END
 
-2 TEXTINCLUDE
-BEGIN
+    2 TEXTINCLUDE BEGIN
     "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "#include ""windows.h""\r\n"
-    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE
-BEGIN
+    "#include "
+    "windows.h"
     "\r\n"
-    "\0"
-END
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0" END
 
-#endif    // APSTUDIO_INVOKED
+    3 TEXTINCLUDE BEGIN
+    "\r\n"
+    "\0" END
 
+#endif // APSTUDIO_INVOKED
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -333,52 +265,34 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
-BEGIN
-    IDD_DIALOG_GOTO_PAGE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 143
-        TOPMARGIN, 6
-    END
+        GUIDELINES DESIGNINFO BEGIN IDD_DIALOG_GOTO_PAGE,
+    DIALOG BEGIN LEFTMARGIN, 7 RIGHTMARGIN, 143 TOPMARGIN,
+    6 END
 
-    IDD_DIALOG_GET_PASSWORD, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 169
-        TOPMARGIN, 7
-    END
+        IDD_DIALOG_GET_PASSWORD,
+    DIALOG BEGIN LEFTMARGIN, 7 RIGHTMARGIN, 169 TOPMARGIN,
+    7 END
 
-    IDD_DIALOG_CHANGE_LANGUAGE, DIALOG
-    BEGIN
-    END
+        IDD_DIALOG_CHANGE_LANGUAGE,
+    DIALOG BEGIN END
 
-    IDD_DIALOG_SETTINGS, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 157
-    END
+        IDD_DIALOG_SETTINGS,
+    DIALOG BEGIN BOTTOMMARGIN,
+    157 END
 
-    IDD_DIALOG_FAV_ADD, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 229
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 64
-    END
-END
-#endif    // APSTUDIO_INVOKED
+        IDD_DIALOG_FAV_ADD,
+    DIALOG BEGIN LEFTMARGIN, 7 RIGHTMARGIN, 229 TOPMARGIN, 7 BOTTOMMARGIN,
+    64 END END
+#endif // APSTUDIO_INVOKED
 
+        /////////////////////////////////////////////////////////////////////////////
+        //
+        // Cursor
+        //
 
+        IDC_CURSORDRAG CURSOR "dragcursor.cur"
+#endif // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
-//
-// Cursor
-//
-
-IDC_CURSORDRAG          CURSOR                  "dragcursor.cur"
-#endif    // English (United States) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -386,6 +300,5 @@ IDC_CURSORDRAG          CURSOR                  "dragcursor.cur"
 // Generated from the TEXTINCLUDE 3 resource.
 //
 
-
 /////////////////////////////////////////////////////////////////////////////
-#endif    // not APSTUDIO_INVOKED
+#endif // not APSTUDIO_INVOKED

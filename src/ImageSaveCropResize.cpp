@@ -1202,7 +1202,7 @@ static void OnSave(ImageEditWindow* ew) {
         // save as-is
         result = ew->srcBitmap->Clone(0, 0, ew->imgW, ew->imgH, ew->srcBitmap->GetPixelFormat());
         if (!result) {
-            MessageBoxWarning(ew->hwnd, "Failed to save image", "Save Image");
+            MessageBoxWarning(ew->hwnd, _TRA("Failed to save image"), _TRA("Save Image"));
             return;
         }
     } else if (ew->mode == ImageEditMode::Crop) {
@@ -1210,14 +1210,14 @@ static void OnSave(ImageEditWindow* ew) {
         Gdiplus::Rect srcRect(ew->cropX, ew->cropY, ew->cropW, ew->cropH);
         result = ew->srcBitmap->Clone(srcRect, ew->srcBitmap->GetPixelFormat());
         if (!result) {
-            MessageBoxWarning(ew->hwnd, "Failed to create cropped image", _TRA("Crop Image"));
+            MessageBoxWarning(ew->hwnd, _TRA("Failed to create cropped image"), _TRA("Crop Image"));
             return;
         }
     } else {
         // create resized bitmap
         result = new Bitmap(ew->newW, ew->newH, ew->srcBitmap->GetPixelFormat());
         if (!result) {
-            MessageBoxWarning(ew->hwnd, "Failed to create resized image", _TRA("Resize Image"));
+            MessageBoxWarning(ew->hwnd, _TRA("Failed to create resized image"), _TRA("Resize Image"));
             return;
         }
         Graphics g(result);
@@ -1266,7 +1266,7 @@ static void SwitchToSaveMode(ImageEditWindow* ew) {
     ew->cropH = ew->imgH;
     ew->newW = ew->imgW;
     ew->newH = ew->imgH;
-    HwndSetText(ew->hwnd, "Save Image");
+    HwndSetText(ew->hwnd, _TRA("Save Image"));
     UpdateModeButtons(ew);
     UpdateSaveButtonText(ew);
     UpdateInfoLabel(ew);
@@ -1931,11 +1931,11 @@ void ShowImageEditWindow(MainWindow* win, ImageEditMode mode, Str filePath, Rend
         winH = screenH;
     }
 
-    WStr title = L"Save Image";
+    TempWStr title = _TRW("Save Image");
     if (mode == ImageEditMode::Crop) {
-        title = L"Crop Image";
+        title = _TRW("Crop Image");
     } else if (mode == ImageEditMode::Resize) {
-        title = L"Resize Image";
+        title = _TRW("Resize Image");
     }
     HWND hwnd =
         CreateWindowExW(WS_EX_CONTROLPARENT, kImageEditWinClassName, title.s, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
