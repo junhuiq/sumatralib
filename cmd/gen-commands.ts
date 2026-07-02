@@ -258,6 +258,8 @@ export const commands = [
     "CmdToggleToolbarPosition", "Toggle Toolbar Position",
     "CmdToggleDjvuEngine", "Toggle DjVu Engine",
     "CmdToggleLibrary", "Toggle Library",
+    "CmdAIModelSettings", "AI Model Settings...",
+    "CmdToggleAIWorkspace", "Toggle AI Workspace",
     "CmdNone", "Do nothing",
 ];
 

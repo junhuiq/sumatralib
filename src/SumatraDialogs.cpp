@@ -4,6 +4,7 @@
 #include "base/Base.h"
 #include "wingui/DialogSizer.h"
 #include "base/Win.h"
+#include "base/Http.h"
 
 #include "Settings.h"
 #include "AppSettings.h"
@@ -1707,4 +1708,176 @@ bool Dialog_AddFavorite(HWND hwnd, Str pageNo, AutoFreeStr& favName) {
 
     favName.SetCopy(data.favName);
     return true;
+}
+
+// AI Model Settings dialog
+struct AIModelSettingsData {
+    GlobalPrefs* prefs;
+    bool testSucceeded;
+};
+
+static void UpdateAIModelDialogButtons(HWND hDlg) {
+    HWND hApiUrl = GetDlgItem(hDlg, IDC_AI_MODEL_API_URL);
+    HWND hApiKey = GetDlgItem(hDlg, IDC_AI_MODEL_API_KEY);
+    HWND hModelName = GetDlgItem(hDlg, IDC_AI_MODEL_MODEL_NAME);
+    HWND hTestBtn = GetDlgItem(hDlg, IDC_AI_MODEL_TEST_BTN);
+    HWND hOkBtn = GetDlgItem(hDlg, IDOK);
+
+    int apiUrlLen = GetWindowTextLengthW(hApiUrl);
+    int apiKeyLen = GetWindowTextLengthW(hApiKey);
+    int modelNameLen = GetWindowTextLengthW(hModelName);
+    bool allFilled = apiUrlLen > 0 && apiKeyLen > 0 && modelNameLen > 0;
+
+    EnableWindow(hTestBtn, allFilled);
+
+    AIModelSettingsData* data = (AIModelSettingsData*)GetWindowLongPtrW(hDlg, GWLP_USERDATA);
+    EnableWindow(hOkBtn, data && data->testSucceeded);
+}
+
+static INT_PTR CALLBACK Dialog_AIModelSettings_Proc(HWND hDlg, UINT msg, WPARAM wp, LPARAM lp) {
+    AIModelSettingsData* data = (AIModelSettingsData*)GetWindowLongPtrW(hDlg, GWLP_USERDATA);
+
+    switch (msg) {
+        case WM_INITDIALOG: {
+            data = (AIModelSettingsData*)lp;
+            SetWindowLongPtrW(hDlg, GWLP_USERDATA, (LONG_PTR)data);
+            data->testSucceeded = false;
+
+            // translate dialog
+            HwndSetText(hDlg, _TRA("AI Model Settings"));
+            HwndSetDlgItemText(hDlg, IDC_AI_MODEL_TEST_BTN, _TRA("Test"));
+            HwndSetDlgItemText(hDlg, IDOK, _TRA("OK"));
+            HwndSetDlgItemText(hDlg, IDCANCEL, _TRA("Cancel"));
+
+            // populate fields from settings
+            GlobalPrefs* prefs = data->prefs;
+            HwndSetText(GetDlgItem(hDlg, IDC_AI_MODEL_API_URL), prefs->aiModel.apiUrl);
+            HwndSetText(GetDlgItem(hDlg, IDC_AI_MODEL_API_KEY), prefs->aiModel.apiKey);
+            HwndSetText(GetDlgItem(hDlg, IDC_AI_MODEL_MODEL_NAME), prefs->aiModel.modelName);
+
+            // if API key is set, mark test as already succeeded so user can just click OK
+            if (prefs->aiModel.apiUrl.s && prefs->aiModel.apiKey.s && prefs->aiModel.modelName.s) {
+                if (prefs->aiModel.apiUrl.len > 0 && prefs->aiModel.apiKey.len > 0 &&
+                    prefs->aiModel.modelName.len > 0) {
+                    data->testSucceeded = true;
+                }
+            }
+
+            UpdateAIModelDialogButtons(hDlg);
+            SetFocus(GetDlgItem(hDlg, IDC_AI_MODEL_API_URL));
+        }
+            return FALSE;
+
+        case WM_COMMAND: {
+            WORD id = LOWORD(wp);
+            WORD code = HIWORD(wp);
+            if (id == IDC_AI_MODEL_API_URL || id == IDC_AI_MODEL_API_KEY || id == IDC_AI_MODEL_MODEL_NAME) {
+                if (code == EN_CHANGE) {
+                    // if user edits fields, require re-test
+                    data->testSucceeded = false;
+                    UpdateAIModelDialogButtons(hDlg);
+                }
+            }
+            if (id == IDC_AI_MODEL_TEST_BTN && code == BN_CLICKED) {
+                // get values from edit fields
+                TempStr apiUrl = HwndGetTextTemp(GetDlgItem(hDlg, IDC_AI_MODEL_API_URL));
+                TempStr apiKey = HwndGetTextTemp(GetDlgItem(hDlg, IDC_AI_MODEL_API_KEY));
+                TempStr modelName = HwndGetTextTemp(GetDlgItem(hDlg, IDC_AI_MODEL_MODEL_NAME));
+
+                // parse URL: extract server, port, path
+                Str url = apiUrl;
+                Str server = url;
+                int port = 443;
+                Str path = StrL("/");
+
+                // strip https:// or http:// prefix
+                if (str::StartsWith(url, StrL("https://"))) {
+                    server = Str(url.s + 8, url.len - 8);
+                    port = 443;
+                } else if (str::StartsWith(url, StrL("http://"))) {
+                    server = Str(url.s + 7, url.len - 7);
+                    port = 80;
+                }
+
+                // find first / to split server:port and path
+                Str slashStr = str::FindChar(server, '/');
+                if (slashStr.s) {
+                    const char* slash = slashStr.s;
+                    path = Str(slash, (int)(server.s + server.len - slash));
+                    server = Str(server.s, (int)(slash - server.s));
+                } else {
+                    // user only gave a base URL like "api.deepseek.com" —
+                    // auto-append the standard OpenAI-compatible chat completions path
+                    path = StrL("/v1/chat/completions");
+                }
+
+                // handle custom port (e.g. localhost:11434)
+                Str colonStr = str::FindChar(server, ':');
+                if (colonStr.s) {
+                    const char* colon = colonStr.s;
+                    // parse port number
+                    int customPort = 0;
+                    for (const char* p = colon + 1; p < server.s + server.len && *p >= '0' && *p <= '9'; p++) {
+                        customPort = customPort * 10 + (*p - '0');
+                    }
+                    if (customPort > 0 && customPort < 65536) {
+                        port = customPort;
+                    }
+                    server = Str(server.s, (int)(colon - server.s));
+                }
+
+                // build request body: {"model":"...","messages":[{"role":"user","content":"test"}]}
+                StrBuilder body;
+                body.Append("{\"model\":\"");
+                body.Append(modelName);
+                body.Append("\",\"messages\":[{\"role\":\"user\",\"content\":\"test\"}]}");
+
+                // build headers (must end with \r\n for WinINet)
+                StrBuilder headers;
+                headers.Append("Content-Type: application/json\r\n");
+                headers.Append(fmt("Content-Length: %d\r\n", (int)body.size()).s);
+                headers.Append("Authorization: Bearer ");
+                headers.Append(apiKey);
+                headers.Append("\r\n");
+
+                StrBuilder resp(4096);
+                bool ok = HttpPostWithResp(server, port, path, &headers, &body, &resp, 120 * 1000);
+                if (ok) {
+                    data->testSucceeded = true;
+                    HwndSetDlgItemText(hDlg, IDC_AI_MODEL_STATUS, _TRA("Connection successful!"));
+                } else {
+                    data->testSucceeded = false;
+                    TempStr errMsg = fmt(_TRA("Connection failed: %s").s, resp.Get());
+                    HwndSetDlgItemText(hDlg, IDC_AI_MODEL_STATUS, errMsg);
+                }
+                UpdateAIModelDialogButtons(hDlg);
+            }
+            if (id == IDOK && code == BN_CLICKED) {
+                if (!data->testSucceeded) {
+                    return TRUE;
+                }
+                // save to prefs
+                GlobalPrefs* prefs = data->prefs;
+                TempStr apiUrl = HwndGetTextTemp(GetDlgItem(hDlg, IDC_AI_MODEL_API_URL));
+                TempStr apiKey = HwndGetTextTemp(GetDlgItem(hDlg, IDC_AI_MODEL_API_KEY));
+                TempStr modelName = HwndGetTextTemp(GetDlgItem(hDlg, IDC_AI_MODEL_MODEL_NAME));
+                str::ReplaceWithCopy(&prefs->aiModel.apiUrl, apiUrl);
+                str::ReplaceWithCopy(&prefs->aiModel.apiKey, apiKey);
+                str::ReplaceWithCopy(&prefs->aiModel.modelName, modelName);
+                EndDialog(hDlg, IDOK);
+            }
+            if (id == IDCANCEL && code == BN_CLICKED) {
+                EndDialog(hDlg, IDCANCEL);
+            }
+        }
+            return TRUE;
+    }
+    return FALSE;
+}
+
+INT_PTR Dialog_AIModelSettings(HWND hwnd, GlobalPrefs* prefs) {
+    AIModelSettingsData data;
+    data.prefs = prefs;
+    data.testSucceeded = false;
+    return CreateDialogBox(IDD_DIALOG_AI_MODEL_SETTINGS, hwnd, Dialog_AIModelSettings_Proc, (LPARAM)&data);
 }

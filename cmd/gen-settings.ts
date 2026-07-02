@@ -372,6 +372,12 @@ const chmUI: Field[] = [
   ),
 ];
 
+const aiModel: Field[] = [
+  mkField("ApiUrl", Str, "", "API endpoint URL for the AI model (OpenAI-compatible)"),
+  mkField("ApiKey", Str, "", "API key for authentication"),
+  mkField("ModelName", Str, "", "model name (e.g., gpt-4, gpt-3.5-turbo)"),
+];
+
 const codexBuild: Field[] = [
   mkField("Model", Str, "gpt-5.5", "Codex model ID for -m (e.g. gpt-5.5, gpt-5.4, o3)"),
   mkField(
@@ -880,6 +886,8 @@ const globalPrefs: Field[] = [
   mkField("ShowFavorites", Bool, false, "if true, we show the Favorites sidebar"),
   mkField("ShowLibrary", Bool, true, "if true, we show the Library sidebar"),
   mkField("LibraryDx", Int, 0, "width of the Library sidebar"),
+  mkField("ShowAiWorkspace", Bool, true, "if true, we show the AI workspace sidebar (right-side AI chat panel)"),
+  mkField("AiWorkspaceDx", Int, 0, "width of the AI workspace sidebar"),
   setStructName(mkArray("Library", libraryEntry, "user's personal library of books and directories"), "LibraryEntry"),
   mkField(
     "ShowToc",
@@ -1055,6 +1063,11 @@ const globalPrefs: Field[] = [
   setVersion(
     setExpert(mkStruct("CodexBuild", codexBuild, "settings for the OpenAI Codex chat sidebar")),
     "3.7",
+  ),
+  mkEmptyLine(),
+  setVersion(
+    setExpert(mkStruct("AIModel", aiModel, "settings for the AI workspace")),
+    "3.8",
   ),
   mkEmptyLine(),
   setVersion(

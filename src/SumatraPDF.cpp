@@ -93,6 +93,7 @@
 #include "GrokBuild.h"
 #include "SelectionTranslate.h"
 #include "CodexBuild.h"
+#include "AIWorkspace.h"
 #include "CommandPalette.h"
 #include "Installer.h"
 #include "RegistryPreview.h"
@@ -2001,6 +2002,7 @@ static void CreateSidebar(MainWindow* win) {
     CreateClaudePanel(win);
     CreateGrokPanel(win);
     CreateCodexPanel(win);
+    CreateAIWorkspacePanel(win);
 
     if (win->tocVisible) {
         HwndRepaintNow(win->hwndTocBox);
@@ -2022,6 +2024,13 @@ static void UpdateToolbarSidebarText(MainWindow* win) {
     win->favLabelWithClose->SetLabel(_TRA("Favorites"));
     if (win->libraryLabel) {
         HwndSetText(win->libraryLabel->hwnd, _TRA("My Library"));
+    }
+    if (win->aiWorkspaceLabelWithClose) {
+        win->aiWorkspaceLabelWithClose->SetLabel(_TRA("AI Assistance"));
+    }
+    if (win->hwndAIWorkspaceOkBtn) {
+        TempWStr btnText = ToWStrTemp(_TRA("Ask AI"));
+        SetWindowTextW(win->hwndAIWorkspaceOkBtn, btnText.s);
     }
     if (win->hwndLibraryAddTooltip) {
         TempWStr tip = ToWStrTemp(_TRA("Add files or directories"));
@@ -4604,7 +4613,9 @@ static bool IsLayoutStateEq(LayoutState* s1, LayoutState* s2) {
            s1->isToolbarVisible == s2->isToolbarVisible && s1->tocVisible == s2->tocVisible &&
            s1->showFavorites == s2->showFavorites && s1->showMenuBarRebar == s2->showMenuBarRebar &&
            s1->claudeVisible == s2->claudeVisible && s1->grokVisible == s2->grokVisible &&
-           s1->codexVisible == s2->codexVisible && s1->aiChatDx == s2->aiChatDx;
+           s1->codexVisible == s2->codexVisible && s1->aiChatDx == s2->aiChatDx &&
+           s1->libraryVisible == s2->libraryVisible && s1->libraryDx == s2->libraryDx &&
+           s1->aiWorkspaceVisible == s2->aiWorkspaceVisible && s1->aiWorkspaceDx == s2->aiWorkspaceDx;
 }
 
 static void RelayoutFrame(MainWindow* win, bool updateToolbars, int sidebarDx) {
@@ -4629,7 +4640,9 @@ static void RelayoutFrame(MainWindow* win, bool updateToolbars, int sidebarDx) {
     curState.claudeVisible = win->claudeVisible;
     curState.grokVisible = win->grokVisible;
     curState.codexVisible = win->codexVisible;
+    curState.aiWorkspaceVisible = win->aiWorkspaceVisible;
     curState.aiChatDx = win->aiChatDx;
+    curState.aiWorkspaceDx = win->aiWorkspaceDx;
 
     // skip redundant relayouts when all layout-affecting state is unchanged
     if (IsLayoutStateEq(&curState, &win->lastLayoutState) && updateToolbars && sidebarDx == -1) {
@@ -4861,6 +4874,22 @@ static void RelayoutFrame(MainWindow* win, bool updateToolbars, int sidebarDx) {
         rc.dx -= aiChatDx + kSplitterDx;
     }
 
+    if (win->aiWorkspaceVisible && win->hwndAIWorkspaceBox) {
+        int aiWsDx = gGlobalPrefs->aiWorkspaceDx;
+        if (aiWsDx <= 0) {
+            aiWsDx = rc.dx / 5;
+        }
+        aiWsDx = limitValue(aiWsDx, kSidebarMinDx, rc.dx / 2);
+        win->aiWorkspaceDx = aiWsDx;
+
+        Rect rSplitter(rc.x + rc.dx - aiWsDx - kSplitterDx, rc.y, kSplitterDx, rc.dy);
+        dh.MoveWindow(win->aiWorkspaceSplitter->hwnd, rSplitter);
+
+        Rect rAIWs(rc.x + rc.dx - aiWsDx, rc.y, aiWsDx, rc.dy);
+        dh.MoveWindow(win->hwndAIWorkspaceBox, rAIWs);
+        rc.dx -= aiWsDx + kSplitterDx;
+    }
+
     dh.MoveWindow(win->hwndCanvas, rc);
 
     dh.End();
@@ -4887,6 +4916,10 @@ static void RelayoutFrame(MainWindow* win, bool updateToolbars, int sidebarDx) {
         RelayoutGrokPanel(win);
     } else if (win->claudeVisible && win->hwndClaudeBox) {
         RelayoutClaudePanel(win);
+    }
+    if (win->aiWorkspaceVisible && win->hwndAIWorkspaceBox) {
+        RelayoutAIWorkspace(win);
+        RedrawWindow(win->hwndAIWorkspaceBox, nullptr, nullptr, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
     }
     if (tocVisible || favVisible) {
         InvalidateRect(win->sidebarSplitter->hwnd, nullptr, TRUE);
@@ -6127,13 +6160,28 @@ static void OnSidebarSplitterMove(Splitter::MoveEvent* ev) {
     MainWindow* win = FindMainWindowByHwnd(hwnd);
 
     Point pcur = HwndGetCursorPos(win->hwndFrame);
-    int sidebarDx = pcur.x; // without splitter
+
+    if (ev->finishedDragging) {
+        win->sidebarDragPrevX = -1;
+        return;
+    }
+
+    // delta-based: on first move after capture, record the initial cursor X
+    // so the sidebar doesn't jump to the absolute cursor position
+    if (win->sidebarDragPrevX < 0) {
+        win->sidebarDragPrevX = pcur.x;
+        return;
+    }
+
+    Rect rFrame = ClientRect(win->hwndFrame);
+    Rect rToc = ClientRect(win->hwndTocBox);
+    int delta = pcur.x - win->sidebarDragPrevX;
+    win->sidebarDragPrevX = pcur.x;
+    int sidebarDx = rToc.dx + delta;
 
     // make sure to keep this in sync with the calculations in RelayoutFrame
     // note: without the min/max(..., rToc.dx), the sidebar will be
     //       stuck at its width if it accidentally got too wide or too narrow
-    Rect rFrame = ClientRect(win->hwndFrame);
-    Rect rToc = ClientRect(win->hwndTocBox);
     int minDx = std::min(kSidebarMinDx, rToc.dx);
     int maxDx = std::max(rFrame.dx / 2, rToc.dx);
     if (sidebarDx < minDx || sidebarDx > maxDx) {
@@ -7720,6 +7768,12 @@ static LRESULT FrameOnCommand(MainWindow* win, HWND hwnd, UINT msg, WPARAM wp, L
             }
             break;
 
+        case CmdToggleAIWorkspace:
+            if (ShouldToggle(cmd, win->aiWorkspaceVisible)) {
+                ToggleAIWorkspace(win);
+            }
+            break;
+
         case CmdExpandToCurrentPage:
             ExpandTocToCurrentPage(win);
             break;
@@ -8018,6 +8072,13 @@ static LRESULT FrameOnCommand(MainWindow* win, HWND hwnd, UINT msg, WPARAM wp, L
         case CmdAdvancedOptions:
         case CmdAdvancedSettings:
             OpenAdvancedOptions();
+            break;
+
+        case CmdAIModelSettings:
+            if (IDOK != Dialog_AIModelSettings(win->hwndFrame, gGlobalPrefs)) {
+                return 0;
+            }
+            SaveSettings();
             break;
 
         case CmdSendByEmail:

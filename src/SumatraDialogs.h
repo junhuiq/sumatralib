@@ -74,5 +74,6 @@ struct BgColorResult {
 bool Dialog_ChangeBackgroundColor(HWND hwnd, COLORREF currentColor, bool isCheckered, Str allFilesLabel,
                                   BgColorResult& result);
 bool Dialog_SetTabColor(HWND hwnd, COLORREF currentColor, bool isUnset, COLORREF& resultColor, bool& resultIsUnset);
+INT_PTR Dialog_AIModelSettings(HWND hwnd, GlobalPrefs* prefs);
 
 TempStr ZoomLevelStr(float zoom);

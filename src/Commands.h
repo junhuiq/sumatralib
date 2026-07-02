@@ -263,7 +263,9 @@ enum {
     CmdToggleToolbarPosition = 452,
     CmdToggleDjvuEngine = 453,
     CmdToggleLibrary = 454,
-    CmdNone = 455,
+    CmdAIModelSettings = 455,
+    CmdToggleAIWorkspace = 456,
+    CmdNone = 457,
 
     /* range for file history */
     CmdFileHistoryFirst,

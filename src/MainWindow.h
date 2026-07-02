@@ -235,8 +235,21 @@ struct MainWindow {
     // width of the active AI chat sidebar (shared by Claude Code, Grok Build, and OpenAI Codex)
     int aiChatDx = 0;
 
+    // AI workspace (right-side panel for general AI chat)
+    HWND hwndAIWorkspaceBox = nullptr;
+    UINT_PTR aiWorkspaceBoxSubclassId = 0;
+    LabelWithCloseWnd* aiWorkspaceLabelWithClose = nullptr;
+    Edit* aiWorkspaceInput = nullptr;
+    HWND hwndAIWorkspaceReply = nullptr;
+    HWND hwndAIWorkspaceOkBtn = nullptr;
+    Splitter* aiWorkspaceSplitter = nullptr;
+    bool aiWorkspaceVisible = false;
+    int aiWorkspaceDx = 0;
+
     // vertical splitter for resizing left side panel
     Splitter* sidebarSplitter = nullptr;
+    // previous cursor X during sidebar splitter drag, -1 if not dragging
+    int sidebarDragPrevX = -1;
 
     // horizontal splitter for resizing favorites and bookmars parts
     Splitter* favSplitter = nullptr;
@@ -345,7 +358,9 @@ struct MainWindow {
         bool claudeVisible = false;
         bool grokVisible = false;
         bool codexVisible = false;
+        bool aiWorkspaceVisible = false;
         int aiChatDx = 0;
+        int aiWorkspaceDx = 0;
     };
     LayoutState lastLayoutState;
 

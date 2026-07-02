@@ -90,6 +90,8 @@ static UINT_PTR gNoDocWhitelist[] = {
     CmdPasteClipboardImage,
     CmdTabGroupRestore,
     CmdSetScreenshotHotkey,
+    CmdAIModelSettings,
+    CmdToggleAIWorkspace,
     0,
 };
 

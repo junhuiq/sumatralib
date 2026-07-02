@@ -267,6 +267,8 @@ static SeqStrings gCommandNames =
     "CmdToggleToolbarPosition\0"
     "CmdToggleDjvuEngine\0"
     "CmdToggleLibrary\0"
+    "CmdAIModelSettings\0"
+    "CmdToggleAIWorkspace\0"
     "CmdNone\0"
     "\0";
 
@@ -525,6 +527,8 @@ static i32 gCommandIds[] = {
     CmdToggleToolbarPosition,
     CmdToggleDjvuEngine,
     CmdToggleLibrary,
+    CmdAIModelSettings,
+    CmdToggleAIWorkspace,
     CmdNone,
 };
 
@@ -783,6 +787,8 @@ SeqStrings gCommandDescriptions =
     "Toggle Toolbar Position\0"
     "Toggle DjVu Engine\0"
     "Toggle Library\0"
+    "AI Model Settings...\0"
+    "Toggle AI Workspace\0"
     "Do nothing\0"
     "\0";
 // clang-format on

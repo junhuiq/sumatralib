@@ -139,6 +139,29 @@ SearchUIFloating = false
 ; if true, we show the Favorites sidebar
 ShowFavorites = false
 
+; if true, we show the Library sidebar
+ShowLibrary = true
+
+; width of the Library sidebar
+LibraryDx = 0
+
+; user's personal library of books and directories
+Library [
+  [
+    ; name of the library entry (display name)
+    Name = 
+
+    ; full file path for book files, empty for directories
+    Path = 
+
+    ; index of parent entry (-1 = top-level child of My Library)
+    ParentIndex = -1
+
+    ; whether tree node is expanded by default
+    IsExpanded = true
+  ]
+]
+
 ; if true, we show table of contents (Bookmarks) sidebar if it's present in the
 ; document
 ShowToc = true
@@ -394,6 +417,18 @@ CodexBuild [
 
     ; background color of the OpenAI Codex chat panel
     BgColor = #ffffff
+]
+
+; settings for the AI workspace (introduced in version 3.8)
+AIModel [
+    ; API endpoint URL for the AI model (OpenAI-compatible)
+    ApiUrl = 
+
+    ; API key for authentication
+    ApiKey = 
+
+    ; model name (e.g., gpt-4, gpt-3.5-turbo)
+    ModelName = 
 ]
 
 ; width of the AI chat sidebar (0 = use default); shared by Claude Code, Grok

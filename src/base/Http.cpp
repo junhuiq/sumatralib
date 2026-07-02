@@ -274,3 +274,127 @@ Exit:
     }
     return ok;
 }
+
+// Tries to POST first via system proxy, then falls back to direct connection.
+// On failure, rspOut always contains a diagnostic error message.
+static bool HttpPostInternal(Str serverA, int port, Str urlA, StrBuilder* headers, StrBuilder* data, StrBuilder* rspOut,
+                              DWORD accessType, unsigned int timeoutMs) {
+    StrBuilder resp(2048);
+    bool ok = false;
+    char* hdr = nullptr;
+    DWORD hdrLen = 0;
+    HINTERNET hConn = nullptr, hReq = nullptr;
+    void* d = nullptr;
+    DWORD dLen = 0;
+    DWORD respHttpCode = 0;
+    DWORD respHttpCodeSize = sizeof(respHttpCode);
+    DWORD dwRead = 0;
+    DWORD flags;
+    DWORD dwService;
+    TempWStr server = ToWStrTemp(serverA);
+    TempWStr url = ToWStrTemp(urlA);
+    DWORD infoLevel;
+    DWORD lastErr = 0;
+
+    HINTERNET hInet = InternetOpenW(kUserAgent, accessType, nullptr, nullptr, 0);
+    if (!hInet) {
+        lastErr = GetLastError();
+        if (rspOut) {
+            rspOut->Reset();
+            rspOut->Append(fmt("InternetOpen(type=%d) failed: error %d", (int)accessType, (int)lastErr).s);
+        }
+        goto Exit;
+    }
+    dwService = INTERNET_SERVICE_HTTP;
+    hConn = InternetConnectW(hInet, server, (INTERNET_PORT)port, nullptr, nullptr, dwService, 0, 1);
+    if (!hConn) {
+        lastErr = GetLastError();
+        if (rspOut) {
+            rspOut->Append(fmt("InternetConnect to %s:%d failed: error %d", serverA, port, (int)lastErr).s);
+        }
+        goto Exit;
+    }
+
+    flags = INTERNET_FLAG_NO_UI;
+    if (port == 443) {
+        flags |= INTERNET_FLAG_SECURE;
+    }
+    hReq = HttpOpenRequestW(hConn, L"POST", url, nullptr, nullptr, nullptr, flags, 0);
+    if (!hReq) {
+        lastErr = GetLastError();
+        if (rspOut) {
+            rspOut->Append(fmt("HttpOpenRequest %s failed: error %d", urlA, (int)lastErr).s);
+        }
+        goto Exit;
+    }
+
+    if (headers && headers->size() > 0) {
+        hdr = headers->CStr().s;
+        hdrLen = (DWORD)headers->size();
+    }
+    if (data && data->size() > 0) {
+        d = data->CStr().s;
+        dLen = (DWORD)data->size();
+    }
+
+    InternetSetOptionW(hReq, INTERNET_OPTION_SEND_TIMEOUT, &timeoutMs, sizeof(timeoutMs));
+    InternetSetOptionW(hReq, INTERNET_OPTION_RECEIVE_TIMEOUT, &timeoutMs, sizeof(timeoutMs));
+
+    if (!HttpSendRequestA(hReq, hdr, hdrLen, d, dLen)) {
+        lastErr = GetLastError();
+        if (rspOut) {
+            rspOut->Append(fmt("HttpSendRequest failed: error %d", (int)lastErr).s);
+        }
+        goto Exit;
+    }
+
+    infoLevel = HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER;
+    HttpQueryInfoW(hReq, infoLevel, &respHttpCode, &respHttpCodeSize, nullptr);
+
+    do {
+        char buf[1024];
+        if (!InternetReadFile(hReq, buf, sizeof(buf), &dwRead)) {
+            lastErr = GetLastError();
+            if (rspOut) {
+                rspOut->Append(fmt("InternetReadFile failed: error %d, httpStatus=%d", (int)lastErr, (int)respHttpCode).s);
+            }
+            goto Exit;
+        }
+        ok = resp.Append(buf, dwRead);
+        if (!ok) {
+            goto Exit;
+        }
+    } while (dwRead > 0);
+
+    ok = (200 == respHttpCode);
+    if (rspOut) {
+        if (ok) {
+            rspOut->Append(resp.Get());
+        } else if (respHttpCode > 0) {
+            // capture error response body even when status != 200
+            rspOut->Append(fmt("HTTP %d: ", (int)respHttpCode).s);
+            rspOut->Append(resp.Get());
+        }
+    }
+Exit:
+    if (hReq) {
+        InternetCloseHandle(hReq);
+    }
+    if (hConn) {
+        InternetCloseHandle(hConn);
+    }
+    if (hInet) {
+        InternetCloseHandle(hInet);
+    }
+    return ok;
+}
+
+// Tries proxy first, falls back to direct if proxy fails
+bool HttpPostWithResp(Str serverA, int port, Str urlA, StrBuilder* headers, StrBuilder* data, StrBuilder* rspOut,
+                      unsigned int timeoutMs) {
+    bool ok = HttpPostInternal(serverA, port, urlA, headers, data, rspOut, INTERNET_OPEN_TYPE_PRECONFIG, timeoutMs);
+    if (!ok) {
+        ok = HttpPostInternal(serverA, port, urlA, headers, data, rspOut, INTERNET_OPEN_TYPE_DIRECT, timeoutMs);
+    }
+    return ok;
+}

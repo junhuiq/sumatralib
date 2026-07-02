@@ -284,6 +284,10 @@ static MenuDef menuDefView[] = {
         CmdAIChatWithOpenAICodex,
     },
     {
+        _TRN("AI Workspace"),
+        CmdToggleAIWorkspace,
+    },
+    {
         nullptr,
         0,
     },
@@ -500,6 +504,10 @@ static MenuDef menuDefSettings[] = {
     {
         _TRN("&Theme"),
         (UINT_PTR)menuDefThemes,
+    },
+    {
+        _TRN("AI Model..."),
+        CmdAIModelSettings,
     },
     {
         nullptr,
@@ -1663,6 +1671,7 @@ static void MenuUpdateStateForWindow(MainWindow* win) {
     bool checked = documentSpecific ? win->tocVisible : gGlobalPrefs->showToc;
     MenuSetChecked(win->menu, CmdToggleBookmarks, checked);
     MenuSetChecked(win->menu, CmdToggleLibrary, gGlobalPrefs->showLibrary);
+    MenuSetChecked(win->menu, CmdToggleAIWorkspace, gGlobalPrefs->showAiWorkspace);
 
     MenuSetChecked(win->menu, CmdFavoriteToggle, gGlobalPrefs->showFavorites);
     MenuSetChecked(win->menu, CmdToggleToolbar, gGlobalPrefs->showToolbar);

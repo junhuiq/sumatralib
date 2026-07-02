@@ -39,6 +39,7 @@
 #include "SumatraConfig.h"
 #include "WindowTab.h"
 #include "SumatraPDF.h"
+#include "AIWorkspace.h"
 #include "EditAnnotations.h"
 #include "Notifications.h"
 #include "MainWindow.h"
@@ -1394,6 +1395,36 @@ static void OnMouseLeftButtonDown(MainWindow* win, int x, int y, WPARAM key) {
     }
 }
 
+static void ShowExplainPopupMenu(MainWindow* win, int x, int y) {
+    WindowTab* tab = win->CurrentTab();
+    if (!tab || !tab->selectionOnPage) {
+        return;
+    }
+
+    bool isTextOnly = false;
+    TempStr selText = GetSelectedTextTemp(tab, " ", isTextOnly);
+    if (!selText || selText.len == 0) {
+        return;
+    }
+
+    HMENU popup = CreatePopupMenu();
+    TempWStr briefly = ToWStrTemp(_TRA("Explain briefly"));
+    TempWStr inDepth = ToWStrTemp(_TRA("Explain in depth"));
+    AppendMenuW(popup, MF_STRING, 1, briefly);
+    AppendMenuW(popup, MF_STRING, 2, inDepth);
+
+    POINT pt{x, y};
+    ClientToScreen(win->hwndCanvas, &pt);
+    int cmd = (int)TrackPopupMenu(popup, TPM_RETURNCMD | TPM_NONOTIFY, pt.x, pt.y, 0, win->hwndCanvas, nullptr);
+    DestroyMenu(popup);
+
+    if (cmd == 0) {
+        return; // dismissed
+    }
+
+    ExplainSelectedText(win, selText, cmd == 2);
+}
+
 static void OnMouseLeftButtonUp(MainWindow* win, int x, int y, WPARAM key) {
     DisplayModel* dm = win->AsFixed();
     ReportIf(!dm);
@@ -1446,8 +1477,9 @@ static void OnMouseLeftButtonUp(MainWindow* win, int x, int y, WPARAM key) {
         }
     } else {
         OnSelectionStop(win, x, y, !didDragMouse);
-        if (MouseAction::Selecting == ma && win->showSelection) {
+        if ((MouseAction::Selecting == ma || MouseAction::SelectingText == ma) && win->showSelection) {
             win->selectionMeasure = dm->CvtFromScreen(win->selectionRect).Size();
+            ShowExplainPopupMenu(win, x, y);
         }
     }
 

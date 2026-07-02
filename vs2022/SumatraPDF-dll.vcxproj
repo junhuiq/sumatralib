@@ -1115,6 +1115,7 @@ cd ../out/rel64_prefast_asan &amp; ..\..\bin\MakeLZSA.exe InstallerData.dat libm
     <ClInclude Include="..\src\ChmDump.h" />
     <ClInclude Include="..\src\ChmFile.h" />
     <ClInclude Include="..\src\ChmModel.h" />
+    <ClInclude Include="..\src\AIWorkspace.h" />
     <ClInclude Include="..\src\ClaudeCode.h" />
     <ClInclude Include="..\src\CodexBuild.h" />
     <ClInclude Include="..\src\CommandAvailability.h" />
@@ -1256,6 +1257,7 @@ cd ../out/rel64_prefast_asan &amp; ..\..\bin\MakeLZSA.exe InstallerData.dat libm
     <ClCompile Include="..\src\ChmDump.cpp" />
     <ClCompile Include="..\src\ChmFile.cpp" />
     <ClCompile Include="..\src\ChmModel.cpp" />
+    <ClCompile Include="..\src\AIWorkspace.cpp" />
     <ClCompile Include="..\src\ClaudeCode.cpp" />
     <ClCompile Include="..\src\CodexBuild.cpp" />
     <ClCompile Include="..\src\CommandAvailability.cpp" />

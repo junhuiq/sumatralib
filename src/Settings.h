@@ -180,6 +180,16 @@ struct CodexBuild {
     ParsedColor bgColorParsed;
 };
 
+// settings for the AI workspace
+struct AIModel {
+    // API endpoint URL for the AI model (OpenAI-compatible)
+    Str apiUrl;
+    // API key for authentication
+    Str apiKey;
+    // model name (e.g., gpt-4, gpt-3.5-turbo)
+    Str modelName;
+};
+
 // default values for annotations in PDF documents
 struct Annotations {
     // highlight annotation color
@@ -565,6 +575,10 @@ struct GlobalPrefs {
     bool showLibrary;
     // width of the Library sidebar
     int libraryDx;
+    // if true, we show the AI workspace sidebar (right-side AI chat panel)
+    bool showAiWorkspace;
+    // width of the AI workspace sidebar
+    int aiWorkspaceDx;
     // user's personal library of books and directories
     Vec<LibraryEntry*>* library;
     // if true, we show table of contents (Bookmarks) sidebar if it's
@@ -658,6 +672,8 @@ struct GlobalPrefs {
     GrokBuild grokBuild;
     // settings for the OpenAI Codex chat sidebar
     CodexBuild codexBuild;
+    // settings for the AI workspace
+    AIModel aiModel;
     // width of the AI chat sidebar (0 = use default); shared by Claude
     // Code, Grok Build, and OpenAI Codex (internal)
     int aiChatSidebarDx;
@@ -728,6 +744,15 @@ struct Themes {
 };
 
 #ifdef INCLUDE_SETTINGSSTRUCTS_METADATA
+
+static const FieldInfo gLibraryEntryFields[] = {
+    {offsetof(LibraryEntry, name), SettingType::String, (intptr_t)""},
+    {offsetof(LibraryEntry, path), SettingType::String, (intptr_t)""},
+    {offsetof(LibraryEntry, parentIndex), SettingType::Int, -1},
+    {offsetof(LibraryEntry, isExpanded), SettingType::Bool, true},
+};
+static const StructInfo gLibraryEntryInfo = {sizeof(LibraryEntry), 4, gLibraryEntryFields,
+                                             "Name\0Path\0ParentIndex\0IsExpanded"};
 
 static const FieldInfo gWindowMarginFields[] = {
     {offsetof(WindowMargin, top), SettingType::Int, 2},
@@ -832,6 +857,13 @@ static const FieldInfo gCodexBuildFields[] = {
 };
 static const StructInfo gCodexBuildInfo = {sizeof(CodexBuild), 5, gCodexBuildFields,
                                            "Model\0Models\0Sandbox\0SkipSandbox\0BgColor"};
+
+static const FieldInfo gAIModelFields[] = {
+    {offsetof(AIModel, apiUrl), SettingType::String, (intptr_t)""},
+    {offsetof(AIModel, apiKey), SettingType::String, (intptr_t)""},
+    {offsetof(AIModel, modelName), SettingType::String, (intptr_t)""},
+};
+static const StructInfo gAIModelInfo = {sizeof(AIModel), 3, gAIModelFields, "ApiUrl\0ApiKey\0ModelName"};
 
 static const FieldInfo gAnnotationsFields[] = {
     {offsetof(Annotations, highlightColor), SettingType::Color, (intptr_t)"#ffff00"},
@@ -948,14 +980,6 @@ static const FieldInfo gFavoriteFields[] = {
     {offsetof(Favorite, pageLabel), SettingType::String, 0},
 };
 static const StructInfo gFavoriteInfo = {sizeof(Favorite), 3, gFavoriteFields, "Name\0PageNo\0PageLabel"};
-
-static const FieldInfo gLibraryEntryFields[] = {
-    {offsetof(LibraryEntry, name), SettingType::String, (intptr_t)""},
-    {offsetof(LibraryEntry, path), SettingType::String, (intptr_t)""},
-    {offsetof(LibraryEntry, parentIndex), SettingType::Int, -1},
-    {offsetof(LibraryEntry, isExpanded), SettingType::Bool, true},
-};
-static const StructInfo gLibraryEntryInfo = {sizeof(LibraryEntry), 4, gLibraryEntryFields, "Name\0Path\0ParentIndex\0IsExpanded"};
 
 static const FieldInfo gPointFFields[] = {
     {offsetof(PointF, x), SettingType::Float, (intptr_t)"0"},
@@ -1084,6 +1108,8 @@ static const FieldInfo gGlobalPrefsFields[] = {
     {offsetof(GlobalPrefs, showLibrary), SettingType::Bool, true},
     {offsetof(GlobalPrefs, libraryDx), SettingType::Int, 0},
     {offsetof(GlobalPrefs, library), SettingType::Array, (intptr_t)&gLibraryEntryInfo},
+    {offsetof(GlobalPrefs, showAiWorkspace), SettingType::Bool, true},
+    {offsetof(GlobalPrefs, aiWorkspaceDx), SettingType::Int, 0},
     {offsetof(GlobalPrefs, showToc), SettingType::Bool, true},
     {offsetof(GlobalPrefs, showLinks), SettingType::Bool, false},
     {offsetof(GlobalPrefs, showStartPage), SettingType::Bool, true},
@@ -1127,6 +1153,8 @@ static const FieldInfo gGlobalPrefsFields[] = {
     {(size_t)-1, SettingType::Comment, 0},
     {offsetof(GlobalPrefs, codexBuild), SettingType::Struct, (intptr_t)&gCodexBuildInfo},
     {(size_t)-1, SettingType::Comment, 0},
+    {offsetof(GlobalPrefs, aiModel), SettingType::Struct, (intptr_t)&gAIModelInfo},
+    {(size_t)-1, SettingType::Comment, 0},
     {offsetof(GlobalPrefs, aiChatSidebarDx), SettingType::Int, 0},
     {(size_t)-1, SettingType::Comment, 0},
     {offsetof(GlobalPrefs, translateToLang), SettingType::String, (intptr_t)""},
@@ -1166,19 +1194,20 @@ static const FieldInfo gGlobalPrefsFields[] = {
     {(size_t)-1, SettingType::Comment, (intptr_t)"Settings below are not recognized by the current version"},
 };
 static const StructInfo gGlobalPrefsInfo = {
-    sizeof(GlobalPrefs), 114, gGlobalPrefsFields,
+    sizeof(GlobalPrefs), 118, gGlobalPrefsFields,
     "\0\0CheckForUpdates\0CustomScreenDPI\0DefaultDisplayMode\0DefaultZoom\0DisableJavaScript\0AllowExternalImages\0Ena"
     "bleTeXEnhancements\0EscToExit\0FullPathInTitle\0InverseSearchCmdLine\0LazyLoading\0MainWindowBackground\0NoHomeTab"
     "\0HomePageSortByFrequentlyRead\0HomePageShowList\0ReloadModifiedDocuments\0RememberOpenedFiles\0RememberStatePerDo"
     "cument\0RestoreSession\0ReuseInstance\0ShowMenubar\0ShowMenubarWithTabs\0ShowTips\0CustomColors\0ShowToolbar\0Tool"
-    "bar\0ToolbarPosition\0SearchUIFloating\0ShowFavorites\0ShowLibrary\0LibraryDx\0Library\0ShowToc\0ShowLinks\0ShowStartPage\0SidebarDx\0Scrollbars\0S"
-    "crollbarInSinglePage\0SmoothScroll\0DjvuEngine\0CitationHoverDelay\0ReadAloudVoiceId\0FastScrollOverScrollbar\0Pre"
-    "ventSleepInFullscreen\0TabWidth\0Theme\0TocDy\0ToolbarSize\0TreeFontName\0TreeFontSize\0UIFontSize\0DisableAntiAli"
-    "as\0DisableAutoLinks\0UseSysColors\0UseTabs\0TabsMru\0ZoomLevels\0ZoomIncrement\0\0FixedPageUI\0\0EBookUI\0\0Comic"
-    "BookUI\0\0ImageUI\0\0ChmUI\0\0ClaudeCode\0\0GrokBuild\0\0CodexBuild\0\0AIChatSidebarDx\0\0TranslateToLang\0\0Annot"
-    "ations\0\0ExternalViewers\0\0ForwardSearch\0\0PrinterDefaults\0\0Fullscreen\0\0SelectionHandlers\0\0Shortcuts\0\0T"
-    "hemes\0\0TabGroups\0\0\0DefaultPasswords\0UiLanguage\0VersionToSkip\0WindowState\0WindowPos\0SearchUIWindowPos\0Fi"
-    "leStates\0SessionData\0ReopenOnce\0TimeOfLastUpdateCheck\0OpenCountWeek\0PropWinPos\0\0"};
+    "bar\0ToolbarPosition\0SearchUIFloating\0ShowFavorites\0ShowLibrary\0LibraryDx\0Library\0ShowAiWorkspace\0AiWorkspaceDx\0ShowToc\0ShowLinks\0ShowSt"
+    "artPage\0SidebarDx\0Scrollbars\0ScrollbarInSinglePage\0SmoothScroll\0DjvuEngine\0CitationHoverDelay\0ReadAloudVoic"
+    "eId\0FastScrollOverScrollbar\0PreventSleepInFullscreen\0TabWidth\0Theme\0TocDy\0ToolbarSize\0TreeFontName\0TreeFon"
+    "tSize\0UIFontSize\0DisableAntiAlias\0DisableAutoLinks\0UseSysColors\0UseTabs\0TabsMru\0ZoomLevels\0ZoomIncrement\0"
+    "\0FixedPageUI\0\0EBookUI\0\0ComicBookUI\0\0ImageUI\0\0ChmUI\0\0ClaudeCode\0\0GrokBuild\0\0CodexBuild\0\0AIModel\0"
+    "\0AIChatSidebarDx\0\0TranslateToLang\0\0Annotations\0\0ExternalViewers\0\0ForwardSearch\0\0PrinterDefaults\0\0Full"
+    "screen\0\0SelectionHandlers\0\0Shortcuts\0\0Themes\0\0TabGroups\0\0\0DefaultPasswords\0UiLanguage\0VersionToSkip\0"
+    "WindowState\0WindowPos\0SearchUIWindowPos\0FileStates\0SessionData\0ReopenOnce\0TimeOfLastUpdateCheck\0OpenCountWe"
+    "ek\0PropWinPos\0\0"};
 static const FieldInfo gTheme_1_Fields[] = {
     {offsetof(Theme, name), SettingType::String, (intptr_t)""},
     {offsetof(Theme, textColor), SettingType::Color, (intptr_t)""},
