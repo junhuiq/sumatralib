@@ -113,8 +113,8 @@ using Gdiplus::SolidBrush;
 
 constexpr const char* kRestrictionsFileName = "sumatrapdfrestrict.ini";
 
-constexpr const char* kSumatraWindowTitle = "SumatraPDF";
-constexpr const WCHAR* kSumatraWindowTitleW = L"SumatraPDF";
+constexpr const char* kSumatraWindowTitle = "Sumatra";
+constexpr const WCHAR* kSumatraWindowTitleW = L"Sumatra";
 
 // Text-to-speech/read-aloud helpers are implemented together near the end of this file.
 static void ReadAloudClearSourceTab();
@@ -2031,6 +2031,26 @@ static void UpdateToolbarSidebarText(MainWindow* win) {
     if (win->hwndAIWorkspaceOkBtn) {
         TempWStr btnText = ToWStrTemp(_TRA("Ask AI"));
         SetWindowTextW(win->hwndAIWorkspaceOkBtn, btnText.s);
+    }
+    if (win->hwndAINoteTip) {
+        TempWStr tip = ToWStrTemp(_TRA("Save notes"));
+        TOOLINFOW ti{};
+        ti.cbSize = sizeof(ti);
+        ti.hwnd = win->hwndAIWorkspaceBox;
+        ti.uId = (UINT_PTR)win->hwndAIWorkspaceNoteBtn;
+        ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+        ti.lpszText = tip.s;
+        SendMessageW(win->hwndAINoteTip, TTM_UPDATETIPTEXT, 0, (LPARAM)&ti);
+    }
+    if (win->hwndAIAskTip) {
+        TempWStr tip = ToWStrTemp(_TRA("Ask AI"));
+        TOOLINFOW ti{};
+        ti.cbSize = sizeof(ti);
+        ti.hwnd = win->hwndAIWorkspaceBox;
+        ti.uId = (UINT_PTR)win->hwndAIWorkspaceOkBtn;
+        ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+        ti.lpszText = tip.s;
+        SendMessageW(win->hwndAIAskTip, TTM_UPDATETIPTEXT, 0, (LPARAM)&ti);
     }
     if (win->hwndLibraryAddTooltip) {
         TempWStr tip = ToWStrTemp(_TRA("Add files or directories"));

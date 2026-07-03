@@ -4,6 +4,8 @@
 #include "base/Base.h"
 #include "base/Win.h"
 #include "base/Http.h"
+#include "base/File.h"
+#include "base/Dpi.h"
 
 #include "wingui/UIModels.h"
 #include "wingui/Layout.h"
@@ -13,13 +15,35 @@
 #include "Settings.h"
 #include "GlobalPrefs.h"
 #include "AppSettings.h"
+#include "AppTools.h"
+#include "Theme.h"
 
 #include "MainWindow.h"
 #include "SumatraPDF.h"
 #include "Translations.h"
 #include "resource.h"
+#include "EngineBase.h"
+#include "DocController.h"
+#include "WindowTab.h"
 #include "AIWorkspace.h"
 #include "base/Log.h"
+
+static HWND AddButtonTooltip(HWND hwndParent, HWND hwndButton, Str tipText) {
+    HWND hwndTip =
+        CreateWindowExW(WS_EX_TOPMOST, TOOLTIPS_CLASS, nullptr, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, CW_USEDEFAULT,
+                        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, hwndButton, nullptr, GetModuleHandle(nullptr), nullptr);
+    if (hwndTip) {
+        TOOLINFOW ti{};
+        ti.cbSize = sizeof(ti);
+        ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+        ti.hwnd = hwndParent;
+        ti.uId = (UINT_PTR)hwndButton;
+        ti.lpszText = CWStrTemp(tipText);
+        SendMessageW(hwndTip, TTM_ADDTOOLW, 0, (LPARAM)&ti);
+        SendMessageW(hwndTip, TTM_SETMAXTIPWIDTH, 0, 300);
+    }
+    return hwndTip;
+}
 
 static void UpdateAIWorkspaceOkBtn(MainWindow* win) {
     if (!win->hwndAIWorkspaceOkBtn) {
@@ -32,6 +56,15 @@ static void UpdateAIWorkspaceOkBtn(MainWindow* win) {
     // button is always enabled when model is configured; empty input is handled in AICallSendPrompt
     EnableWindow(win->hwndAIWorkspaceOkBtn, hasModel);
     InvalidateRect(win->hwndAIWorkspaceOkBtn, nullptr, TRUE);
+}
+
+static void UpdateAIWorkspaceNoteBtn(MainWindow* win) {
+    if (!win->hwndAIWorkspaceNoteBtn) {
+        return;
+    }
+    // always enable so tooltip shows on hover; SaveNotesToFile checks for preconditions
+    EnableWindow(win->hwndAIWorkspaceNoteBtn, TRUE);
+    InvalidateRect(win->hwndAIWorkspaceNoteBtn, nullptr, TRUE);
 }
 
 void AICallSendPrompt(MainWindow* win) {
@@ -176,12 +209,109 @@ void ExplainSelectedText(MainWindow* win, Str selectedText, bool inDepth) {
     }
 
     HwndSetText(win->aiWorkspaceInput->hwnd, prompt);
-    AICallSendPrompt(win);
+
+    // only auto-send if AI model is configured
+    bool hasModel = gGlobalPrefs && gGlobalPrefs->aiModel.apiUrl.s && gGlobalPrefs->aiModel.apiKey.s &&
+                    gGlobalPrefs->aiModel.modelName.s && gGlobalPrefs->aiModel.apiUrl.len > 0 &&
+                    gGlobalPrefs->aiModel.apiKey.len > 0 && gGlobalPrefs->aiModel.modelName.len > 0;
+    if (hasModel) {
+        AICallSendPrompt(win);
+    }
+}
+
+static bool SaveNotesToFile(MainWindow* win) {
+    WindowTab* tab = win->CurrentTab();
+    if (!tab || !tab->filePath || !tab->ctrl) {
+        return false;
+    }
+
+    // derive .md path from book path
+    TempStr mdPath = fmt("%s.md", path::GetPathNoExtTemp(tab->filePath));
+
+    // get text from input
+    TempStr text = HwndGetTextTemp(win->aiWorkspaceInput->hwnd);
+    if (text.len == 0) {
+        return false;
+    }
+
+    int pageNo = tab->ctrl->CurrentPageNo();
+
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+    TempStr dateStr =
+        fmt("%04d-%02d-%02d %02d:%02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+
+    // build note entry: first line is bold title
+    // **First line**
+    // Rest of text
+    //
+    // Page: N | Date: YYYY-MM-DD HH:MM:SS
+    // ---
+    const char* firstLineEnd = text.s;
+    while (firstLineEnd < text.s + text.len && *firstLineEnd != '\n' && *firstLineEnd != '\r') {
+        firstLineEnd++;
+    }
+    Str firstLine(text.s, (int)(firstLineEnd - text.s));
+
+    StrBuilder entry;
+    entry.Append("**");
+    entry.Append(firstLine);
+    entry.Append("**\n\n");
+
+    // append remaining lines (skip the first line's newline)
+    const char* rest = firstLineEnd;
+    while (rest < text.s + text.len && (*rest == '\n' || *rest == '\r')) {
+        rest++;
+    }
+    if (rest < text.s + text.len) {
+        entry.Append(rest, (int)(text.s + text.len - rest));
+        entry.Append("\n\n");
+    }
+
+    entry.Append(fmt("Page: %d | %s\n\n---\n\n", pageNo, dateStr));
+
+    // read existing content if file exists, then append
+    StrBuilder fileContent;
+    if (file::Exists(mdPath)) {
+        ByteSlice existing = file::ReadFile(mdPath);
+        fileContent.Append(Str((const char*)existing.data(), (int)existing.size()));
+        free(existing.data());
+    }
+    fileContent.Append(entry.Get());
+
+    bool ok = file::WriteFile(mdPath, fileContent.AsByteSlice());
+
+    // clear input on success
+    if (ok) {
+        HwndSetText(win->aiWorkspaceInput->hwnd, StrL(""));
+    }
+    return ok;
+}
+
+void TakeNotesFromSelection(MainWindow* win, Str selectedText) {
+    if (!selectedText || selectedText.len == 0) {
+        return;
+    }
+
+    // ensure AI workspace is visible
+    if (!win->hwndAIWorkspaceBox) {
+        CreateAIWorkspacePanel(win);
+    }
+    if (!win->aiWorkspaceVisible) {
+        ToggleAIWorkspace(win);
+    }
+
+    // fill text in input but don't auto-send
+    HwndSetText(win->aiWorkspaceInput->hwnd, selectedText);
+    UpdateAIWorkspaceNoteBtn(win);
 }
 
 static LRESULT CALLBACK WndProcAIWorkspaceInput(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR uIdSubclass,
                                                 DWORD_PTR dwRefData) {
     MainWindow* win = (MainWindow*)dwRefData;
+    if (msg == WM_COMMAND && HIWORD(wp) == EN_CHANGE) {
+        UpdateAIWorkspaceNoteBtn(win);
+    }
     if (msg == WM_KEYDOWN && wp == VK_RETURN && (GetKeyState(VK_SHIFT) & 0x8000) &&
         !(GetKeyState(VK_CONTROL) & 0x8000)) {
         if (IsWindowEnabled(win->hwndAIWorkspaceOkBtn)) {
@@ -207,18 +337,83 @@ static LRESULT CALLBACK WndProcAIWorkspaceBox(HWND hwnd, UINT msg, WPARAM wp, LP
         }
         return TRUE;
     }
-    if (msg == WM_CTLCOLORBTN) {
-        HWND hBtn = (HWND)lp;
-        if (hBtn == win->hwndAIWorkspaceOkBtn) {
-            HDC hdc = (HDC)wp;
-            SetBkMode(hdc, TRANSPARENT);
-            return (LRESULT)GetSysColorBrush(COLOR_BTNFACE);
+    if (msg == WM_DRAWITEM) {
+        LPDRAWITEMSTRUCT dis = (LPDRAWITEMSTRUCT)lp;
+        bool isNote = (dis->hwndItem == win->hwndAIWorkspaceNoteBtn);
+        bool isAsk = (dis->hwndItem == win->hwndAIWorkspaceOkBtn);
+        if (!isNote && !isAsk) {
+            return FALSE;
         }
-        return FALSE;
+        HDC hdc = dis->hDC;
+        RECT rc = dis->rcItem;
+
+        // background
+        COLORREF bgCol = ThemeControlBackgroundColor();
+        HBRUSH hbr = CreateSolidBrush(bgCol);
+        FillRect(hdc, &rc, hbr);
+        DeleteObject(hbr);
+
+        // hover/pressed effect
+        if (dis->itemState & ODS_SELECTED) {
+            COLORREF c = RGB((GetRValue(bgCol) * 3) / 4, (GetGValue(bgCol) * 3) / 4, (GetBValue(bgCol) * 3) / 4);
+            HBRUSH hp = CreateSolidBrush(c);
+            RECT rp = rc;
+            InflateRect(&rp, -1, -1);
+            FillRect(hdc, &rp, hp);
+            DeleteObject(hp);
+        } else if (dis->itemState & ODS_HOTLIGHT) {
+            int r2 = GetRValue(bgCol) + 40;
+            int g2 = GetGValue(bgCol) + 40;
+            int b2 = GetBValue(bgCol) + 40;
+            COLORREF c = RGB(r2 > 255 ? 255 : r2, g2 > 255 ? 255 : g2, b2 > 255 ? 255 : b2);
+            HBRUSH hh = CreateSolidBrush(c);
+            RECT rh = rc;
+            InflateRect(&rh, -1, -1);
+            FillRect(hdc, &rh, hh);
+            DeleteObject(hh);
+        }
+
+        // focus rect
+        if (dis->itemState & ODS_FOCUS) {
+            RECT rf = rc;
+            InflateRect(&rf, -2, -2);
+            DrawFocusRect(hdc, &rf);
+        }
+
+        // draw the JPEG icon centered, scaled to fit with 3px padding
+        auto* bmp = (Gdiplus::Bitmap*)(isNote ? win->aiNoteIcon : win->aiAskIcon);
+        if (bmp) {
+            int pad = DpiScale(win->hwndFrame, 3);
+            Gdiplus::Graphics g(hdc);
+            g.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
+            Gdiplus::Rect destRect(rc.left + pad, rc.top + pad, rc.right - rc.left - pad * 2,
+                                   rc.bottom - rc.top - pad * 2);
+            g.DrawImage(bmp, destRect);
+        }
+        return TRUE;
     }
     if (msg == WM_SIZE) {
         RelayoutAIWorkspace(win);
         return 0;
+    }
+    // relay mouse messages to tooltip controls so tooltips show on hover
+    if (msg == WM_MOUSEMOVE || msg == WM_LBUTTONDOWN || msg == WM_LBUTTONUP || msg == WM_RBUTTONDOWN ||
+        msg == WM_RBUTTONUP || msg == WM_MBUTTONDOWN || msg == WM_MBUTTONUP) {
+        MSG m = {};
+        m.hwnd = hwnd;
+        m.message = msg;
+        m.wParam = wp;
+        m.lParam = lp;
+        m.time = GetMessageTime();
+        DWORD pos = GetMessagePos();
+        m.pt.x = GET_X_LPARAM(pos);
+        m.pt.y = GET_Y_LPARAM(pos);
+        if (win->hwndAINoteTip) {
+            SendMessageW(win->hwndAINoteTip, TTM_RELAYEVENT, 0, (LPARAM)&m);
+        }
+        if (win->hwndAIAskTip) {
+            SendMessageW(win->hwndAIAskTip, TTM_RELAYEVENT, 0, (LPARAM)&m);
+        }
     }
     if (msg == WM_COMMAND) {
         WORD id = LOWORD(wp);
@@ -229,6 +424,11 @@ static LRESULT CALLBACK WndProcAIWorkspaceBox(HWND hwnd, UINT msg, WPARAM wp, LP
         }
         if (id == IDC_AI_WORKSPACE_OK_BTN && code == BN_CLICKED) {
             AICallSendPrompt(win);
+            return 0;
+        }
+        if (id == IDC_AI_WORKSPACE_NOTE_BTN && code == BN_CLICKED) {
+            SaveNotesToFile(win);
+            UpdateAIWorkspaceNoteBtn(win);
             return 0;
         }
     }
@@ -245,7 +445,6 @@ void RelayoutAIWorkspace(MainWindow* win) {
     }
 
     int labelDy = 60;
-    int btnDy = 32;
     int padding = 4;
     int inputSidePad = 8;
     int btnReplyGap = 60;
@@ -263,15 +462,22 @@ void RelayoutAIWorkspace(MainWindow* win) {
         MoveWindow(win->aiWorkspaceInput->hwnd, rc.x + inputSidePad, inputTop, rc.dx - inputSidePad * 2, inputDy, TRUE);
     }
 
-    // Ask AI button below input, centered and wider
+    // Two icon buttons below input, centered
     int btnTop = inputTop + inputDy + padding;
-    int btnWidth = 140;
+    int iconBtnSize = DpiScale(win->hwndFrame, 24);
+    int btnGap = DpiScale(win->hwndFrame, 6);
+    int totalBtnW = iconBtnSize * 2 + btnGap;
+    int btnLeft = rc.x + (rc.dx - totalBtnW) / 2;
+
+    if (win->hwndAIWorkspaceNoteBtn) {
+        MoveWindow(win->hwndAIWorkspaceNoteBtn, btnLeft, btnTop, iconBtnSize, iconBtnSize, TRUE);
+    }
     if (win->hwndAIWorkspaceOkBtn) {
-        MoveWindow(win->hwndAIWorkspaceOkBtn, rc.x + (rc.dx - btnWidth) / 2, btnTop, btnWidth, btnDy, TRUE);
+        MoveWindow(win->hwndAIWorkspaceOkBtn, btnLeft + iconBtnSize + btnGap, btnTop, iconBtnSize, iconBtnSize, TRUE);
     }
 
-    // reply area with 60px gap from button
-    int replyTop = btnTop + btnDy + btnReplyGap;
+    // reply area with gap from button
+    int replyTop = btnTop + iconBtnSize + btnReplyGap;
     if (win->hwndAIWorkspaceReply) {
         MoveWindow(win->hwndAIWorkspaceReply, rc.x + inputSidePad, replyTop, rc.dx - inputSidePad * 2,
                    rc.dy - replyTop - padding, TRUE);
@@ -334,7 +540,7 @@ void CreateAIWorkspacePanel(MainWindow* win) {
     }
     win->aiWorkspaceLabelWithClose = label;
     label->SetPaddingXY(2, 2);
-    HwndSetText(label->hwnd, _TRA("AI Assistance"));
+    HwndSetText(label->hwnd, _TRA("AI Assistant"));
 
     // input box (multi-line), slightly narrower than the workspace
     auto input = new Edit();
@@ -356,14 +562,44 @@ void CreateAIWorkspacePanel(MainWindow* win) {
                         win->hwndAIWorkspaceBox, (HMENU)(UINT_PTR)IDC_AI_WORKSPACE_REPLY, hmod, nullptr);
     SendMessageW(win->hwndAIWorkspaceReply, WM_SETFONT, (WPARAM)GetDefaultGuiFont(), TRUE);
 
-    // Ask AI button — created last so it has the highest z-order
+    int iconBtnSize = DpiScale(win->hwndFrame, 24);
+
+    // Load JPEG icons via GDI+
+    TempStr exeDir = GetAppDataDirTemp();
     {
-        TempWStr btnText = ToWStrTemp(_TRA("Ask AI"));
-        win->hwndAIWorkspaceOkBtn =
-            CreateWindowExW(0, L"BUTTON", btnText.s, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT, 0, 0, 80, 28,
-                            win->hwndAIWorkspaceBox, (HMENU)(UINT_PTR)IDC_AI_WORKSPACE_OK_BTN, hmod, nullptr);
+        TempStr path = path::JoinTemp(exeDir, StrL("takenotes.jpg"));
+        TempWStr pathW = ToWStrTemp(path);
+        auto* bmp = new Gdiplus::Bitmap(pathW.s);
+        if (bmp->GetLastStatus() == Gdiplus::Ok) {
+            win->aiNoteIcon = bmp;
+        } else {
+            delete bmp;
+        }
     }
-    SendMessageW(win->hwndAIWorkspaceOkBtn, WM_SETFONT, (WPARAM)GetDefaultGuiFont(), TRUE);
+    {
+        TempStr path = path::JoinTemp(exeDir, StrL("askAI.jpg"));
+        TempWStr pathW = ToWStrTemp(path);
+        auto* bmp = new Gdiplus::Bitmap(pathW.s);
+        if (bmp->GetLastStatus() == Gdiplus::Ok) {
+            win->aiAskIcon = bmp;
+        } else {
+            delete bmp;
+        }
+    }
+
+    // Take Notes button — owner-draw icon button
+    win->hwndAIWorkspaceNoteBtn =
+        CreateWindowExW(0, L"BUTTON", L"",
+                        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_OWNERDRAW, 0, 0, iconBtnSize, iconBtnSize,
+                        win->hwndAIWorkspaceBox, (HMENU)(UINT_PTR)IDC_AI_WORKSPACE_NOTE_BTN, hmod, nullptr);
+    win->hwndAINoteTip = AddButtonTooltip(win->hwndAIWorkspaceBox, win->hwndAIWorkspaceNoteBtn, _TRA("Save notes"));
+
+    // Ask AI button — owner-draw icon button
+    win->hwndAIWorkspaceOkBtn =
+        CreateWindowExW(0, L"BUTTON", L"",
+                        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_OWNERDRAW, 0, 0, iconBtnSize, iconBtnSize,
+                        win->hwndAIWorkspaceBox, (HMENU)(UINT_PTR)IDC_AI_WORKSPACE_OK_BTN, hmod, nullptr);
+    win->hwndAIAskTip = AddButtonTooltip(win->hwndAIWorkspaceBox, win->hwndAIWorkspaceOkBtn, _TRA("Ask AI"));
 
     // subclass input for Enter key and text change detection
     UINT_PTR inputSubclassId = NextSubclassId();
@@ -381,6 +617,7 @@ void CreateAIWorkspacePanel(MainWindow* win) {
     }
 
     UpdateAIWorkspaceOkBtn(win);
+    UpdateAIWorkspaceNoteBtn(win);
 }
 
 void ToggleAIWorkspace(MainWindow* win) {
@@ -395,6 +632,7 @@ void ToggleAIWorkspace(MainWindow* win) {
     }
     if (win->aiWorkspaceVisible) {
         UpdateAIWorkspaceOkBtn(win);
+        UpdateAIWorkspaceNoteBtn(win);
         if (win->aiWorkspaceInput && win->aiWorkspaceInput->hwnd) {
             HwndSetFocus(win->aiWorkspaceInput->hwnd);
         }
