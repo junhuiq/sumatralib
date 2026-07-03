@@ -128,7 +128,7 @@ static UpdateInfo* ParseUpdateInfo(Str d) {
     if (!d) {
         return nullptr;
     }
-    Str prefix = (d.s[0] == '[') ? StrL("[SumatraPDF]") : StrL("SumatraPDF");
+    Str prefix = (d.s[0] == '[') ? StrL("[Sumatra]") : StrL("Sumatra");
     if (!str::StartsWith(d, prefix)) {
         return nullptr;
     }
@@ -145,7 +145,7 @@ static UpdateInfo* ParseUpdateInfo(Str d) {
         str::Free(promoString);
     }
 
-    SquareTreeNode* node = root->GetChild("SumatraPDF");
+    SquareTreeNode* node = root->GetChild("Sumatra");
     if (!node) {
         return nullptr;
     }

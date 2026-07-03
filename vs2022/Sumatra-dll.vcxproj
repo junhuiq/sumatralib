@@ -99,10 +99,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A50E6CD3-91DC-5FD9-7A70-D0FF66DD3B3E}</ProjectGuid>
+    <ProjectGuid>{8BF37F11-F7A8-F806-809D-F2DDEC51EF0A}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SumatraPDF-dll</RootNamespace>
+    <RootNamespace>Sumatra-dll</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -270,128 +270,128 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\dbg32\</OutDir>
-    <IntDir>$(ProjectDir)..\out\dbg32\obj\x86\Debug\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\dbg32\obj\x86\Debug\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\dbg64\</OutDir>
-    <IntDir>$(ProjectDir)..\out\dbg64\obj\x64\Debug\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\dbg64\obj\x64\Debug\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\dbgarm64\</OutDir>
-    <IntDir>$(ProjectDir)..\out\dbgarm64\obj\arm64\Debug\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\dbgarm64\obj\arm64\Debug\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug x64_asan|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\dbg64_asan\</OutDir>
-    <IntDir>$(ProjectDir)..\out\dbg64_asan\obj\x64_asan\Debug\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\dbg64_asan\obj\x64_asan\Debug\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFull|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\dbgfull32\</OutDir>
-    <IntDir>$(ProjectDir)..\out\dbgfull32\obj\x86\DebugFull\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\dbgfull32\obj\x86\DebugFull\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFull|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\dbgfull64\</OutDir>
-    <IntDir>$(ProjectDir)..\out\dbgfull64\obj\x64\DebugFull\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\dbgfull64\obj\x64\DebugFull\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFull|ARM64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\dbgfullarm64\</OutDir>
-    <IntDir>$(ProjectDir)..\out\dbgfullarm64\obj\arm64\DebugFull\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\dbgfullarm64\obj\arm64\DebugFull\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFull x64_asan|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\dbgfull64_asan\</OutDir>
-    <IntDir>$(ProjectDir)..\out\dbgfull64_asan\obj\x64_asan\DebugFull\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\dbgfull64_asan\obj\x64_asan\DebugFull\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\rel32\</OutDir>
-    <IntDir>$(ProjectDir)..\out\rel32\obj\x86\Release\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\rel32\obj\x86\Release\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\rel64\</OutDir>
-    <IntDir>$(ProjectDir)..\out\rel64\obj\x64\Release\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\rel64\obj\x64\Release\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\arm64\</OutDir>
-    <IntDir>$(ProjectDir)..\out\arm64\obj\arm64\Release\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\arm64\obj\arm64\Release\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release x64_asan|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\rel64_asan\</OutDir>
-    <IntDir>$(ProjectDir)..\out\rel64_asan\obj\x64_asan\Release\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\rel64_asan\obj\x64_asan\Release\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseAnalyze|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\rel32_prefast\</OutDir>
-    <IntDir>$(ProjectDir)..\out\rel32_prefast\obj\x86\ReleaseAnalyze\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\rel32_prefast\obj\x86\ReleaseAnalyze\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseAnalyze|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\rel64_prefast\</OutDir>
-    <IntDir>$(ProjectDir)..\out\rel64_prefast\obj\x64\ReleaseAnalyze\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\rel64_prefast\obj\x64\ReleaseAnalyze\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseAnalyze|ARM64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\arm64_prefast\</OutDir>
-    <IntDir>$(ProjectDir)..\out\arm64_prefast\obj\arm64\ReleaseAnalyze\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\arm64_prefast\obj\arm64\ReleaseAnalyze\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseAnalyze x64_asan|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\out\rel64_prefast_asan\</OutDir>
-    <IntDir>$(ProjectDir)..\out\rel64_prefast_asan\obj\x64_asan\ReleaseAnalyze\SumatraPDF-dll\</IntDir>
-    <TargetName>SumatraPDF-dll</TargetName>
+    <IntDir>$(ProjectDir)..\out\rel64_prefast_asan\obj\x64_asan\ReleaseAnalyze\Sumatra-dll\</IntDir>
+    <TargetName>Sumatra-dll</TargetName>
     <TargetExt>.exe</TargetExt>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>

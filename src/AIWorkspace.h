@@ -8,3 +8,4 @@ void ToggleAIWorkspace(MainWindow* win);
 void RelayoutAIWorkspace(MainWindow* win);
 void AICallSendPrompt(MainWindow* win);
 void ExplainSelectedText(MainWindow* win, Str selectedText, bool inDepth);
+void TakeNotesFromSelection(MainWindow* win, Str selectedText);

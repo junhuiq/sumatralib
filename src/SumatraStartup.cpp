@@ -963,7 +963,7 @@ For more information see <a href="%s">SumatraPDF docs</a>.)",
         flags |= TDF_RTL_LAYOUT;
     }
     dialogConfig.cbSize = sizeof(TASKDIALOGCONFIG);
-    dialogConfig.pszWindowTitle = L"SumatraPDF";
+    dialogConfig.pszWindowTitle = L"Sumatra";
     dialogConfig.pszMainInstruction = L"Failed to load libmupdf.dll";
     dialogConfig.pszContent = CWStrTemp(msg);
     dialogConfig.nDefaultButton = IDOK;
@@ -1138,8 +1138,8 @@ static void ShowNoAdminErrorMessage() {
     DWORD flags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_POSITION_RELATIVE_TO_WINDOW | TDF_ENABLE_HYPERLINKS;
     dialogConfig.cbSize = sizeof(TASKDIALOGCONFIG);
     dialogConfig.cxWidth = 340;
-    dialogConfig.pszWindowTitle = L"SumatraPDF";
-    dialogConfig.pszMainInstruction = L"SumatraPDF is running as admin and cannot open files from a non-admin process";
+    dialogConfig.pszWindowTitle = L"Sumatra";
+    dialogConfig.pszMainInstruction = L"Sumatra is running as admin and cannot open files from a non-admin process";
     ;
     dialogConfig.pszContent =
         LR"(<a href="https://github.com/sumatrapdfreader/sumatrapdf/discussions/2316">Read more about this error</a>)";

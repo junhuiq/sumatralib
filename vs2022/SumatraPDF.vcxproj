@@ -1079,6 +1079,7 @@
     <ClInclude Include="..\ext\darkmodelib\src\UAHMenuBar.h" />
     <ClInclude Include="..\ext\darkmodelib\src\Version.h" />
     <ClInclude Include="..\src\AIChatCommon.h" />
+    <ClInclude Include="..\src\AIWorkspace.h" />
     <ClInclude Include="..\src\Accelerators.h" />
     <ClInclude Include="..\src\Annotation.h" />
     <ClInclude Include="..\src\AppSettings.h" />
@@ -1106,7 +1107,6 @@
     <ClInclude Include="..\src\ExifDump.h" />
     <ClInclude Include="..\src\ExternalViewers.h" />
     <ClInclude Include="..\src\Favorites.h" />
-    <ClInclude Include="..\src\Library.h" />
     <ClInclude Include="..\src\FileHistory.h" />
     <ClInclude Include="..\src\FileThumbnails.h" />
     <ClInclude Include="..\src\FilterHighlightDraw.h" />
@@ -1122,6 +1122,7 @@
     <ClInclude Include="..\src\HtmlFormatter.h" />
     <ClInclude Include="..\src\ImageSaveCropResize.h" />
     <ClInclude Include="..\src\Installer.h" />
+    <ClInclude Include="..\src\Library.h" />
     <ClInclude Include="..\src\MainWindow.h" />
     <ClInclude Include="..\src\Menu.h" />
     <ClInclude Include="..\src\MobiDoc.h" />
@@ -1209,6 +1210,7 @@
       <DisableSpecificWarnings>4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\src\AIChatCommon.cpp" />
+    <ClCompile Include="..\src\AIWorkspace.cpp" />
     <ClCompile Include="..\src\Accelerators.cpp" />
     <ClCompile Include="..\src\Annotation.cpp" />
     <ClCompile Include="..\src\AppSettings.cpp" />
@@ -1255,7 +1257,6 @@
     <ClCompile Include="..\src\ExifDump.cpp" />
     <ClCompile Include="..\src\ExternalViewers.cpp" />
     <ClCompile Include="..\src\Favorites.cpp" />
-    <ClCompile Include="..\src\Library.cpp" />
     <ClCompile Include="..\src\FileHistory.cpp" />
     <ClCompile Include="..\src\FileThumbnails.cpp" />
     <ClCompile Include="..\src\FilterHighlightDraw.cpp" />
@@ -1272,6 +1273,7 @@
     <ClCompile Include="..\src\ImageSaveCropResize.cpp" />
     <ClCompile Include="..\src\Installer.cpp" />
     <ClCompile Include="..\src\InstallerCommon.cpp" />
+    <ClCompile Include="..\src\Library.cpp" />
     <ClCompile Include="..\src\MainWindow.cpp" />
     <ClCompile Include="..\src\Menu.cpp" />
     <ClCompile Include="..\src\MobiDoc.cpp" />

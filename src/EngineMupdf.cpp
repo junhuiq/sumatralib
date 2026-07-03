@@ -1914,20 +1914,31 @@ static void fz_unlock_context_cs(void* user, int lock) {
     LeaveCriticalSection(&e->fz_locks[lock]);
 }
 
+static bool SuppressRepeatedWarning(const char* msg, const char* pattern, AtomicBool* seen) {
+    if (str::Contains(msg, pattern)) {
+        if (AtomicBoolGet(seen)) {
+            return true;
+        }
+        AtomicBoolSet(seen, true);
+    }
+    return false;
+}
+
 static void fz_print_cb(void* user, const char* msg) {
     Str msgStr = Str(msg);
-    static AtomicBool seenMsg = 0;
-    if (str::Contains(msgStr, "generic error: couldn't find system font")) {
-        // this floods the log in some files
-        // it shows a font name like this:
-        // generic error: couldn't find system font 'AngsanaUPC-Bold'
-        // generic error: couldn't find system font 'AngsanaUPC'
-        // we only show the first missed font. Could use StrVec() to log every
-        // missing font
-        if (AtomicBoolGet(&seenMsg)) {
-            return;
-        }
-        AtomicBoolSet(&seenMsg, true);
+    static AtomicBool seenMissingFont = 0;
+    static AtomicBool seenHyphenation = 0;
+    static AtomicBool seenCannotLoadImage = 0;
+
+    // suppress repeated warnings that flood the log
+    if (SuppressRepeatedWarning(msg, "couldn't find system font", &seenMissingFont)) {
+        return;
+    }
+    if (SuppressRepeatedWarning(msg, "no hyphenation table", &seenHyphenation)) {
+        return;
+    }
+    if (SuppressRepeatedWarning(msg, "html: cannot load image", &seenCannotLoadImage)) {
+        return;
     }
     if (!str::EndsWith(msgStr, "\n")) {
         msgStr = str::JoinTemp(msgStr, "\n");

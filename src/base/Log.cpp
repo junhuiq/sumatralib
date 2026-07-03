@@ -10,7 +10,7 @@
 
 constexpr const WCHAR* kPipeName = L"\\\\.\\pipe\\LOCAL\\ArsLexis-Logger";
 
-Str gLogAppName = StrL("SumatraPDF");
+Str gLogAppName = StrL("Sumatra");
 
 Mutex gLogMutex;
 

@@ -83,8 +83,7 @@ function winver7_defines()
      "NTDDI_VERSION=0x06010000"
   }
 
-  -- v143 is the last that supports windows 7
-  toolset "v143"   -- this is the official way in recent Premake versions
+  toolset "v145"
 end
 
 function winver_latest_defines()
@@ -217,10 +216,10 @@ function uses_zlib()
   zlib_defines()
 end
 
-workspace "SumatraPDF"
+workspace "Sumatra"
   configurations { "Debug", "DebugFull", "Release", "ReleaseAnalyze", }
   platforms { "x86", "x64", "arm64", "x64_asan" }
-  startproject "SumatraPDF"
+  startproject "Sumatra"
 
   filter "platforms:x86"
     architecture "x86"
@@ -953,7 +952,7 @@ workspace "SumatraPDF"
     links { "comctl32", "gdiplus", "msimg32", "shlwapi", "version", "wininet", "wintrust", "crypt32" }
 
   -- a single static executable
-  project "SumatraPDF"
+  project "Sumatra"
     kind "WindowedApp"
     language "C++"
     cppdialect "C++latest"
@@ -1032,7 +1031,7 @@ workspace "SumatraPDF"
     prebuildcommands { "..\\bin\\MakeLZSA.exe ..\\translations\\translations.txt.lzsa ..\\translations\\translations-good.txt:translations-good.txt" }
 
   -- a dll version where most functionality is in libmupdf.dll
-  project "SumatraPDF-dll"
+  project "Sumatra-dll"
     kind "WindowedApp"
     language "C++"
     cppdialect "C++latest"

@@ -242,6 +242,11 @@ struct MainWindow {
     Edit* aiWorkspaceInput = nullptr;
     HWND hwndAIWorkspaceReply = nullptr;
     HWND hwndAIWorkspaceOkBtn = nullptr;
+    HWND hwndAIWorkspaceNoteBtn = nullptr;
+    void* aiNoteIcon = nullptr; // Gdiplus::Bitmap*
+    void* aiAskIcon = nullptr;  // Gdiplus::Bitmap*
+    HWND hwndAINoteTip = nullptr;
+    HWND hwndAIAskTip = nullptr;
     Splitter* aiWorkspaceSplitter = nullptr;
     bool aiWorkspaceVisible = false;
     int aiWorkspaceDx = 0;

@@ -48566,5 +48566,13 @@ cn:请深入解释：
 cn:AI辅助
 :Ask AI
 cn:向AI提问
+:Save notes
+cn:保存笔记
 :Enter prompt...
 cn:输入提示词...
+:AI Assistant
+cn:AI辅助
+:Take Notes
+cn:记笔记
+:Take notes
+cn:记笔记

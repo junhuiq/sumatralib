@@ -26368,3 +26368,11 @@ cn:AI辅助
 cn:向AI提问
 :Enter prompt...
 cn:输入提示词...
+:AI Assistant
+cn:AI辅助
+:Take Notes
+cn:记笔记
+:Take notes
+cn:记笔记
+:Save notes
+cn:保存笔记

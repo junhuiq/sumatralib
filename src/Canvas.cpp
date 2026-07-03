@@ -1395,6 +1395,12 @@ static void OnMouseLeftButtonDown(MainWindow* win, int x, int y, WPARAM key) {
     }
 }
 
+static bool IsAIModelConfigured() {
+    return gGlobalPrefs && gGlobalPrefs->aiModel.apiUrl.s && gGlobalPrefs->aiModel.apiKey.s &&
+           gGlobalPrefs->aiModel.modelName.s && gGlobalPrefs->aiModel.apiUrl.len > 0 &&
+           gGlobalPrefs->aiModel.apiKey.len > 0 && gGlobalPrefs->aiModel.modelName.len > 0;
+}
+
 static void ShowExplainPopupMenu(MainWindow* win, int x, int y) {
     WindowTab* tab = win->CurrentTab();
     if (!tab || !tab->selectionOnPage) {
@@ -1408,10 +1414,15 @@ static void ShowExplainPopupMenu(MainWindow* win, int x, int y) {
     }
 
     HMENU popup = CreatePopupMenu();
-    TempWStr briefly = ToWStrTemp(_TRA("Explain briefly"));
-    TempWStr inDepth = ToWStrTemp(_TRA("Explain in depth"));
-    AppendMenuW(popup, MF_STRING, 1, briefly);
-    AppendMenuW(popup, MF_STRING, 2, inDepth);
+    TempWStr takeNotes = ToWStrTemp(_TRA("Take notes"));
+    AppendMenuW(popup, MF_STRING, 3, takeNotes);
+
+    if (IsAIModelConfigured()) {
+        TempWStr briefly = ToWStrTemp(_TRA("Explain briefly"));
+        TempWStr inDepth = ToWStrTemp(_TRA("Explain in depth"));
+        AppendMenuW(popup, MF_STRING, 1, briefly);
+        AppendMenuW(popup, MF_STRING, 2, inDepth);
+    }
 
     POINT pt{x, y};
     ClientToScreen(win->hwndCanvas, &pt);
@@ -1422,7 +1433,11 @@ static void ShowExplainPopupMenu(MainWindow* win, int x, int y) {
         return; // dismissed
     }
 
-    ExplainSelectedText(win, selText, cmd == 2);
+    if (cmd == 3) {
+        TakeNotesFromSelection(win, selText);
+    } else {
+        ExplainSelectedText(win, selText, cmd == 2);
+    }
 }
 
 static void OnMouseLeftButtonUp(MainWindow* win, int x, int y, WPARAM key) {
