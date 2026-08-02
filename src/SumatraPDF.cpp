@@ -1810,10 +1810,14 @@ static void ReplaceDocumentInCurrentTab(LoadArgs* args, DocController* ctrl, Fil
     // if the document had parsing errors (the same condition that adds "Show
     // Errors" to the context menu), surface it with a notification whose
     // "Errors" link opens the Show Errors dialog (matching the unsupported-
-    // features notification: bottom-right, small margins, 16s timeout)
+    // features notification: bottom-right, small margins, 16s timeout).
+    // mupdf also reports many benign warnings for non-PDF files opened with
+    // the PDF engine (epub: missing fonts / images, HTML/CSS quirks), so only
+    // notify for actual PDFs; the "Show Errors" menu entry still lists them.
+    Kind fileKind = GuessFileTypeFromName(tab->filePath);
     DisplayModel* dmErr = win->AsFixed();
     EngineBase* engineErr = dmErr ? dmErr->GetEngine() : nullptr;
-    if (engineErr && engineErr->errors.Size() > 0) {
+    if (fileKind == kindFilePDF && engineErr && engineErr->errors.Size() > 0) {
         TempStr msg = fmt("[%s](CmdShowErrors) %s", _TRA("Errors"), _TRA("in PDF"));
         NotificationCreateArgs nargs;
         nargs.hwndParent = win->hwndCanvas;
