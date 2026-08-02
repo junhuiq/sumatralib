@@ -650,8 +650,8 @@ static bool isSafeAccel(const ACCEL& a) {
         }
     }
 
-    if ((a.fVirt == (FCONTROL | FVIRTKEY)) && (k == 'V')) {
-        // Ctrl+V should work normally in edit controls (paste text)
+    if ((a.fVirt == (FCONTROL | FVIRTKEY)) && (k == 'C' || k == 'V')) {
+        // Ctrl+C / Ctrl+V should work normally in edit controls (copy / paste text)
         return false;
     }
 
