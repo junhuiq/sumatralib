@@ -4,6 +4,13 @@
 
 Available in [pre-release](https://www.sumatrapdfreader.org/prerelease) builds.
 
+- **SumatraLIB**: add a personal **Library** sidebar (`View` menu → *My Library*) to add files/folders (including subfolders) and organize books into categories for quick access
+- **SumatraLIB**: add an **AI workspace** panel: a right-side chat with any OpenAI-compatible endpoint (OpenAI, DeepSeek, Ollama, etc.). Type a prompt and press `Shift+Enter` (or click *Ask AI*) to send, the reply appears in the response area; configure the endpoint in *Settings → AI Model Settings...*
+- **SumatraLIB**: *Explain selected text*: select text in a document and choose *Explain briefly* / *Explain in depth* from the popup menu to send it to the AI workspace
+- **SumatraLIB**: save AI workspace content as Markdown notes next to the open document (*Save notes* button)
+- **SumatraLIB**: Chinese and English UI; menus, prompts and AI replies adapt to the interface language (`ShowAiWorkspace`, `AiWorkspaceDx`, `LibraryVisible`, `LibraryDx` and `aiModel.*` advanced settings)
+- fix: `Ctrl+C` / `Ctrl+V` now copy / paste in the AI workspace input box and reply area
+- fix: opening EPUB files no longer shows a spurious "Errors in PDF" notification (those are benign MuPDF warnings; the *Show Errors* menu entry still lists them)
 - can open and view Markdown documents (`.md`, `.markdown`): they render as formatted text (GitHub Flavored Markdown, including tables, task lists and strikethrough) via the rendering engine, and the installer registers the file association so they open from Explorer and drag&drop
 - updated the bundled MuPDF rendering engine to 1.28.0
 - add [AI Chat with document](AI-Chat-with-document.md) sidebar (in View menu and `Ctrl + k` [command palette](Command-Palette.md)) for asking questions about the open PDF or image via [Claude Code](https://docs.anthropic.com/en/docs/claude-code); per-tab session state, model/effort selection, and session history from `~/.claude/projects/`
@@ -100,6 +107,7 @@ Available in [pre-release](https://www.sumatrapdfreader.org/prerelease) builds.
 **New commands:**
 
 - `CmdAIChatWithClaudeCode` : "AI Chat"
+- `CmdAIModelSettings` : "AI Model Settings..."
 - `CmdChangeBackgroundColor` : "Change Background Color"
 - `CmdChangeScrollbar` : "Change Scrollbar"
 - `CmdCommandPalette *` : command palette table-of-contents mode (`CmdCommandPaletteTOC`, `Shift + F12`)
@@ -137,9 +145,11 @@ Available in [pre-release](https://www.sumatrapdfreader.org/prerelease) builds.
 - `CmdStartAutoScroll` : "Start Auto-Scroll"
 - `CmdTabGroupRestore` : "Restore Tab Group"
 - `CmdTabGroupSave` : "Save Tab Group"
+- `CmdToggleAIWorkspace` : "Toggle AI Workspace"
 - `CmdToggleChmUI` : "Toggle CHM UI"
 - `CmdToggleEscToExit` : "Toggle Esc to Exit"
 - `CmdToggleHoverPreview` : "Toggle Hover Preview"
+- `CmdToggleLibrary` : "Toggle Library"
 - `CmdToggleReuseInstance` : "Toggle Reuse Instance"
 - `CmdToggleScrollbarInSinglePage` : "Toggle Scrollbar In Single Page"
 - `CmdToggleSmoothScroll` : "Toggle Smooth Scroll"

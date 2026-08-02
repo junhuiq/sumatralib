@@ -89,6 +89,9 @@ CmdToggleChmUI,,Toggle CHM UI,"Toggle dedicated CHM UI for CHM documents, reload
 CmdAIChatWithClaudeCode,,AI Chat with document using Claude Code,"Toggle Claude Code chat sidebar, ver 3.7+. See AI-Chat-with-document.md"
 CmdAIChatWithGrokBuild,,AI Chat with document using Grok Build,"Toggle Grok Build chat sidebar, ver 3.7+. See AI-Chat-with-document.md#grok-build"
 CmdAIChatWithOpenAICodex,,AI Chat with document using OpenAI Codex,"Toggle OpenAI Codex chat sidebar, ver 3.7+. See AI-Chat-with-document.md#openai-codex"
+CmdToggleLibrary,,Toggle Library,"Toggle My Library sidebar, ver 3.7+"
+CmdAIModelSettings,,AI Model Settings...,"Open AI model settings dialog (API endpoint, API key, model name), ver 3.7+"
+CmdToggleAIWorkspace,,Toggle AI Workspace,"Toggle AI workspace panel, ver 3.7+"
 CmdToggleUseTabs,,Toggle Use Tabs,"Toggle UseTabs setting, only affects new windows, ver 3.7+"
 CmdToggleTabsMru,,Toggle Tabs MRU Order,"Toggle TabsMru setting: Ctrl+Tab switches tabs in most recently used order, ver 3.7+"
 CmdToggleFrequentlyRead,,Toggle Frequently Read,ver 3.5+

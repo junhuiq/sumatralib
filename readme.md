@@ -4,6 +4,12 @@ A personal library and reader with AI assistance.
 
 SumatraLIB is built on the [SumatraPDF](https://www.sumatrapdfreader.org/) engine and extends it with library management and AI-powered reading features.
 
+## Download
+
+**Latest release: [v1.0](https://github.com/junhuiq/sumatralib/releases/tag/v1.0)**
+
+- [Sumatra.exe](https://github.com/junhuiq/sumatralib/releases/download/v1.0/Sumatra.exe) — portable 64-bit build, no installation required. Download and run directly.
+
 ## Features
 
 ### Personal Library
