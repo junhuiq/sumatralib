@@ -11,6 +11,7 @@ Available in [pre-release](https://www.sumatrapdfreader.org/prerelease) builds.
 - **SumatraLIB**: Chinese and English UI; menus, prompts and AI replies adapt to the interface language (`ShowAiWorkspace`, `AiWorkspaceDx`, `LibraryVisible`, `LibraryDx` and `aiModel.*` advanced settings)
 - fix: `Ctrl+C` / `Ctrl+V` now copy / paste in the AI workspace input box and reply area
 - fix: opening EPUB files no longer shows a spurious "Errors in PDF" notification (those are benign MuPDF warnings; the *Show Errors* menu entry still lists them)
+- fix: EPUB books whose chapters declare a legacy single-byte encoding (`iso-8859-1` / `windows-1252`) but actually store UTF-8 no longer render every curly apostrophe as `â`; genuinely legacy-encoded books are still decoded correctly
 - can open and view Markdown documents (`.md`, `.markdown`): they render as formatted text (GitHub Flavored Markdown, including tables, task lists and strikethrough) via the rendering engine, and the installer registers the file association so they open from Explorer and drag&drop
 - updated the bundled MuPDF rendering engine to 1.28.0
 - add [AI Chat with document](AI-Chat-with-document.md) sidebar (in View menu and `Ctrl + k` [command palette](Command-Palette.md)) for asking questions about the open PDF or image via [Claude Code](https://docs.anthropic.com/en/docs/claude-code); per-tab session state, model/effort selection, and session history from `~/.claude/projects/`

@@ -951,6 +951,32 @@ static const char *find_xml_encoding(char *s)
 	return table;
 }
 
+static int
+is_valid_utf8(const unsigned char *s, size_t n)
+{
+	size_t i = 0;
+	while (i < n)
+	{
+		int c = s[i];
+		int skip = c < 0x80 ? 0 : c < 0xC0 ? -1 : c < 0xE0 ? 1 : c < 0xF0 ? 2 : c < 0xF5 ? 3 : -1;
+		if (skip == -1)
+			return 0;
+		while (skip-- > 0)
+			if (++i >= n || (s[i] & 0xC0) != 0x80)
+				return 0;
+		++i;
+	}
+	return 1;
+}
+
+static int
+is_single_byte_encoding(const char *enc)
+{
+	return !strcmp(enc, "iso-8859-1") || !strcmp(enc, "iso-8859-7") ||
+		!strcmp(enc, "koi8-r") || !strcmp(enc, "windows-1250") ||
+		!strcmp(enc, "windows-1251") || !strcmp(enc, "windows-1252");
+}
+
 static char *convert_to_utf8(fz_context *ctx, unsigned char *s, size_t n, int *dofree)
 {
 	fz_text_decoder dec;
@@ -987,6 +1013,12 @@ static char *convert_to_utf8(fz_context *ctx, unsigned char *s, size_t n, int *d
 	}
 
 	enc = find_xml_encoding((char*)s);
+	/* Many files declare a legacy single-byte encoding (e.g. iso-8859-1 or
+	 * windows-1252) while actually containing UTF-8. Decoding them as the
+	 * declared encoding would mangle the text (e.g. curly apostrophes shown
+	 * as accented letters), so prefer UTF-8 whenever the content is valid. */
+	if (enc && is_single_byte_encoding(enc) && is_valid_utf8(s, n))
+		enc = NULL;
 	if (enc)
 	{
 		fz_init_text_decoder(ctx, &dec, enc);
